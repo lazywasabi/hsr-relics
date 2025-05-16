@@ -17,13 +17,13 @@
         HANDS: ["ATK"],
         BODY: ["HP%", "DEF%", "ATK%", "CRIT Rate", "CRIT DMG", "Effect HIT Rate", "Outgoing Healing"],
         FEET: ["HP%", "DEF%", "ATK%", "Speed"],
-        SPHERE: ["ATK%", "HP%", "DEF%", "Physical DMG", "Fire DMG", "Ice DMG", "Wind DMG", "Lightning DMG", "Quantum DMG", "Imaginary DMG"],
-        ROPE: ["ATK%", "HP%", "DEF%", "Break Effect", "Energy Regeneration Rate"]
+        SPHERE: ["HP%", "DEF%", "ATK%", "Physical DMG", "Fire DMG", "Ice DMG", "Wind DMG", "Lightning DMG", "Quantum DMG", "Imaginary DMG"],
+        ROPE: ["HP%", "DEF%", "ATK%", "Break Effect", "Energy Regeneration Rate"]
     };
 
     const SUBSTATS_CANONICAL = [
-        "HP", "DEF", "ATK", "HP%", "DEF%", "ATK%", "Break Effect", "CRIT Rate", "CRIT DMG",
-        "Effect Hit Rate", "Effect RES", "Speed"
+        "HP", "DEF", "ATK", "HP%", "DEF%", "ATK%", "Speed", "CRIT Rate", "CRIT DMG",
+        "Break Effect", "Effect Hit Rate", "Effect RES"
     ];
     const SUBSTAT_ALIASES = {
         "hp": "HP%",
@@ -463,7 +463,8 @@
         let substatSectionHtml = '<p>This shows which substats are generally useful for characters who equip this set.</p>';
         substatSectionHtml += '<table class="analysis-table"><thead><tr><th>Substat</th><th>Characters Using This (with this set)</th></tr></thead><tbody>';
 
-        const sortedCanonicals = [...SUBSTATS_CANONICAL].sort();
+        // const sortedCanonicals = [...SUBSTATS_CANONICAL].sort();
+        const sortedCanonicals = [...SUBSTATS_CANONICAL]
 
         for (const stat of sortedCanonicals) {
             const usersSet = relevantSubstatsMap.get(stat) || new Set();
