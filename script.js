@@ -226,11 +226,11 @@
                     </div>
                     <div id="relic-list-container" class="item-list-scroll-container">
                         <div class="relic-list-section">
-                            <h3>Relics (Cavern)</h3>
+                            <h3>Cavern Relics</h3>
                             <ul id="relic-list-cavern" class="content-list"></ul>
                         </div>
                         <div class="relic-list-section">
-                            <h3>Planetary Ornaments (Universe)</h3>
+                            <h3>Planar Ornaments</h3>
                             <ul id="relic-list-planetary" class="content-list"></ul>
                         </div>
                     </div>
@@ -313,7 +313,7 @@
                 </div>
 
                 <div class="build-section">
-                    <h3>Relic Sets (Cavern)</h3>
+                    <h3>Cavern Relics</h3>
                     <div class="build-grid">
                         ${relicRecommendations.length > 0 ? relicRecommendations.map((relicSetOption, index) => {
                             const isTwoPlusTwo = relicSetOption.length > 1;
@@ -329,7 +329,7 @@
                 </div>
                 
                 <div class="build-section">
-                    <h3>Planetary Ornament Sets (Simulated Universe)</h3>
+                    <h3>Planar Ornaments</h3>
                      <div class="build-grid">
                         ${ornamentRecommendations.length > 0 ? ornamentRecommendations.map((ornamentSet, index) => `
                             <div class="stat-group">
@@ -419,7 +419,7 @@
                 const userCount = users.length;
                 const statClass = userCount > 0 ? 'stat-used' : 'stat-unused';
                 const charListId = `mainstat-chars-${slugify(piece)}-${slugify(stat)}`;
-                const toggleText = userCount > 0 ? `${userCount} char${userCount !== 1 ? 's' : ''}` : `0 users`;
+                const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? 's' : ''}` : `0 character`;
                 const toggleClass = userCount > 0 ? '' : 'no-users';
 
 
@@ -460,7 +460,7 @@
             }
         });
 
-        let substatSectionHtml = '<h4>Recommended Substats for Users of This Set:</h4>';
+        let substatSectionHtml = '<p>This shows which substats are generally useful for characters who equip this set.</p>';
         substatSectionHtml += '<table class="analysis-table"><thead><tr><th>Substat</th><th>Characters Using This (with this set)</th></tr></thead><tbody>';
 
         const sortedCanonicals = [...SUBSTATS_CANONICAL].sort();
@@ -470,7 +470,7 @@
             const userCount = usersSet.size;
             const usersArray = Array.from(usersSet);
             const charListId = `substat-chars-${slugify(stat)}`;
-            const toggleText = userCount > 0 ? `${userCount} char${userCount !== 1 ? 's' : ''}` : `0 users`;
+            const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? 's' : ''}` : `0 character`;
             const toggleClass = userCount > 0 ? '' : 'no-users';
 
             substatSectionHtml += `<tr>
@@ -500,8 +500,8 @@
                 ${setInfoHtml}
 
                 <div class="relic-info-section">
-                    <h3>Main Stat Analysis</h3>
-                    <p>This shows which main stats are generally useful for characters who equip this set. Head (HP) and Hands (ATK) are fixed and not shown.</p>
+                    <h3>Main Stat Usage Analysis</h3>
+                    <p>This shows which main stats are generally useful for characters who equip this set.</p>
                     ${mainStatHtml}
                 </div>
                 <div class="relic-info-section">
