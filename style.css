@@ -175,10 +175,14 @@ a:hover {
 
 .relic-list-section h3 {
     font-size: 1.1rem;
-    color: var(--secondary-text-color);
+    color: var(--primary-text-color);
     margin-top: 1rem;
     margin-bottom: 0.5rem;
-    padding-left: 0.5rem;
+    padding: 0.5rem 0 0.5rem 0.5rem;
+    position: sticky;
+    top: 0;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .relic-list-section:first-child h3 {
