@@ -314,7 +314,7 @@
 
                 <div class="build-section">
                     <h3>Cavern Relics</h3>
-                    <div class="build-grid">
+                    <div class="build-grid build-relics">
                         ${relicRecommendations.length > 0 ? relicRecommendations.map((relicSetOption, index) => {
                             const isTwoPlusTwo = relicSetOption.length > 1;
                             const optionTitle = `Option ${index + 1}${isTwoPlusTwo ? ' (2 pcs + 2 pcs)' : ''}`;
@@ -330,7 +330,7 @@
                 
                 <div class="build-section">
                     <h3>Planar Ornaments</h3>
-                     <div class="build-grid">
+                     <div class="build-grid build-planer-ornaments">
                         ${ornamentRecommendations.length > 0 ? ornamentRecommendations.map((ornamentSet, index) => `
                             <div class="stat-group">
                                 <h4>Option ${index + 1}</h4>
@@ -342,7 +342,7 @@
 
                 <div class="build-section">
                     <h3>Main Stats Priority</h3>
-                    <div class="build-grid">
+                    <div class="build-grid build-main-stats">
                         <div class="stat-group"><h4>Body</h4><ul><li>${character.body.join(' / ') || 'N/A'}</li></ul></div>
                         <div class="stat-group"><h4>Feet</h4><ul><li>${character.feet.join(' / ') || 'N/A'}</li></ul></div>
                         <div class="stat-group"><h4>Planar Sphere</h4><ul><li>${character.planarSphere.join(' / ') || 'N/A'}</li></ul></div>
