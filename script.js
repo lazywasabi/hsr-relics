@@ -308,7 +308,7 @@
         appContent.innerHTML = `
             <div class="page-container">
                 <div class="page-header">
-                    <h2>${character.name} - Recommended Builds</h2>
+                    <h2>${character.name} Recommended Builds</h2>
                     <a href="#" class="back-button">Back to Lists</a>
                 </div>
 
@@ -494,7 +494,7 @@
         appContent.innerHTML = `
             <div class="page-container">
                 <div class="page-header">
-                    <h2>${setName} - Set Information</h2>
+                    <h2>${setName}</h2>
                     <a href="#" class="back-button">Back to Lists</a>
                 </div>
 
