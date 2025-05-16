@@ -1,0 +1,3 @@
+- Built with Gemini 2.5 Pro Preview (05-06) via Google AI Studio
+- Character build data from [Prydwen.gg](https://www.prydwen.gg/star-rail/) via [Relic Salvaging Helper Spreadsheets by arthurmauk](https://docs.google.com/spreadsheets/d/1SQK2xihURxiA2PTp0lAiRYXlphnm-EFa3CoKaUO7UOc/edit?gid=1312600809#gid=1312600809)
+- Relics data from [Honkai: Star Rail Wiki](https://honkai-star-rail.fandom.com/wiki/Relic/Sets)
