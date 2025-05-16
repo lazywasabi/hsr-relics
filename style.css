@@ -250,6 +250,10 @@ a:hover {
     gap: 1.5rem;
 }
 
+.build-grid.build-main-stats {
+    grid-template-columns: repeat(4, 1fr);
+}
+
 .stat-group {
     background-color: var(--bg-color);
     padding: 1rem;
@@ -455,7 +459,8 @@ a:hover {
         margin-bottom: 0.5rem;
     }
 
-    .build-grid {
+    .build-grid,
+    .build-grid.build-main-stats {
         grid-template-columns: 1fr;
     }
 
