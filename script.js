@@ -18,7 +18,7 @@
         BODY: ["HP%", "DEF%", "ATK%", "CRIT Rate", "CRIT DMG", "Effect HIT Rate", "Outgoing Healing"],
         FEET: ["HP%", "DEF%", "ATK%", "Speed"],
         SPHERE: ["HP%", "DEF%", "ATK%", "Physical DMG", "Fire DMG", "Ice DMG", "Wind DMG", "Lightning DMG", "Quantum DMG", "Imaginary DMG"],
-        ROPE: ["HP%", "DEF%", "ATK%", "Break Effect", "Energy Regeneration Rate"]
+        ROPE: ["HP%", "DEF%", "ATK%", "Break Effect", "Energy Regen Rate"]
     };
 
     const SUBSTATS_CANONICAL = [
