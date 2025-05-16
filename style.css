@@ -8,7 +8,7 @@
     --red-color: #ff4d4d;
     --green-color: #4CAF50;
     --border-color: #444;
-    --font-family: 'Roboto', sans-serif;
+    --font-family: 'Inter', sans-serif;
 }
 
 * {
@@ -128,6 +128,7 @@ a:hover {
     border: 1px solid var(--border-color);
     border-radius: 4px;
     font-size: 1rem;
+    font-family: var(--font-family);
 }
 
 .search-clear-btn {
