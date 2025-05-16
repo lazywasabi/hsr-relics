@@ -35,7 +35,7 @@ header {
 }
 
 header h1 a {
-    color: var(--accent-color);
+    color: var(--primary-text-color);
     text-decoration: none;
     font-weight: 500;
 }
@@ -221,7 +221,6 @@ a:hover {
     border-radius: 4px;
     cursor: pointer;
     font-size: 0.9rem;
-    text-transform: uppercase;
     font-weight: 500;
     transition: background-color 0.2s ease;
 }
