@@ -26,12 +26,17 @@
         "Effect Hit Rate", "Effect RES", "Speed"
     ];
     const SUBSTAT_ALIASES = {
+        "hp": "HP%",
+        "def": "DEF%",
+        "atk": "ATK%",
         "ehr": "Effect Hit Rate",
+        "ehr%": "Effect Hit Rate",
         "eff res": "Effect RES",
+        "eff res%": "Effect RES",
         "spd": "Speed",
         "crit rate": "CRIT Rate",
         "crit dmg": "CRIT DMG",
-        "crit": "CRIT Rate"
+        "break effect%": "Break Effect"
     };
 
     let characterBuilds = [];
