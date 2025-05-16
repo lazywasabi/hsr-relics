@@ -175,7 +175,7 @@ a:hover {
 
 .relic-list-section h3 {
     font-size: 1.1rem;
-    color: var(--primary-text-color);
+    color: var(--secondary-text-color);
     margin-top: 1rem;
     margin-bottom: 0.5rem;
     padding: 0.5rem 0 0.5rem 0.5rem;
@@ -214,7 +214,7 @@ a:hover {
 
 .back-button {
     padding: 0.6rem 1.2rem;
-    background-color: var(--accent-color);
+    background-color: #00689c;
     color: white;
     border: none;
     border-radius: 4px;
@@ -222,10 +222,11 @@ a:hover {
     font-size: 0.9rem;
     text-transform: uppercase;
     font-weight: 500;
+    transition: background-color 0.2s ease;
 }
 
 .back-button:hover {
-    background-color: #0088cc;
+    background-color: var(--accent-color);
     text-decoration: none;
 }
 
@@ -258,7 +259,7 @@ a:hover {
 
 .stat-group h4 {
     font-size: 1.1rem;
-    color: var(--accent-color);
+    color: var(--primary-text-color);
     margin-bottom: 0.75rem;
 }
 
@@ -277,7 +278,7 @@ a:hover {
 }
 
 .set-name {
-    color: var(--highlight-color);
+    color: var(--accent-color);
     font-weight: 500;
 }
 
@@ -310,7 +311,6 @@ a:hover {
 }
 
 .relic-set-bonuses h4 {
-    color: var(--accent-color);
     font-size: 1.1rem;
     margin-bottom: 0.5rem;
 }
@@ -318,7 +318,7 @@ a:hover {
 .relic-set-bonuses p {
     font-size: 0.95rem;
     margin-bottom: 0.75rem;
-    color: var(--primary-text-color);
+    color: var(--secondary-text-color);
 }
 
 .relic-set-bonuses p:last-child {
@@ -330,6 +330,7 @@ a:hover {
     border-collapse: collapse;
     margin-bottom: 1.5rem;
     table-layout: fixed;
+    margin-top: 1rem;
 }
 
 .analysis-table th,
@@ -359,7 +360,6 @@ a:hover {
 
 .main-stat-type {
     font-weight: bold;
-    color: var(--accent-color);
 }
 
 .stat-value {
