@@ -224,7 +224,7 @@
                     <h2>Relic Sets</h2>
                     <div class="search-container">
                         <input type="text" id="relic-search" class="search-input" placeholder="Search relic sets...">
-                        <button class="search-clear-btn" id="clear-relic-search">×</button>
+                        <button class="search-clear-btn" id="clear-relic-search" tabindex="-1">×</button>
                     </div>
                     <div id="relic-list-container" class="item-list-scroll-container">
                         <div class="relic-list-section">
@@ -241,7 +241,7 @@
                     <h2>Characters</h2>
                     <div class="search-container">
                         <input type="text" id="char-search" class="search-input" placeholder="Search characters...">
-                        <button class="search-clear-btn" id="clear-char-search">×</button>
+                        <button class="search-clear-btn" id="clear-char-search" tabindex="-1">×</button>
                     </div>
                     <div class="item-list-scroll-container">
                         <ul id="char-list" class="content-list"></ul>
