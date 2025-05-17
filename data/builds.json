@@ -260,6 +260,26 @@
    "Substats": "CRIT DMG = CRIT Rate > HP% > SPD (Less than 95)"
  },
  {
+   "Name": "Cipher",
+   "Body": "Unknown",
+   "Feet": "Unknown",
+   "Relic Set Concat": "Pioneer Diver of Dead Waters",
+   "Relic1": "Pioneer Diver of Dead Waters",
+   "Relic2": "",
+   "Relic3": "",
+   "Relic4": "",
+   "Relic5": "",
+   "Planar Sphere": "Unknown",
+   "Link Rope": "Unknown",
+   "Planetary Set Concat": "Lushaka, the Sunken Seas",
+   "Planetary1": "Lushaka, the Sunken Seas",
+   "Planetary2": "",
+   "Planetary3": "",
+   "Planetary4": "",
+   "Planetary5": "",
+   "Substats": "Unknown"
+ },
+ {
    "Name": "Clara",
    "Body": "CRIT Rate, CRIT DMG",
    "Feet": "ATK%",
@@ -558,6 +578,26 @@
    "Planetary4": "",
    "Planetary5": "",
    "Substats": "SPD (breakpoint) > HP% > EFF RES% = DEF%"
+ },
+ {
+   "Name": "Hyacine",
+   "Body": "Outgoing Healing, HP%",
+   "Feet": "Speed",
+   "Relic Set Concat": "Warrior Goddess of Sun and Thunder, Messenger Traversing Hackerspace, Sacerdos' Relived Ordeal, Warrior Goddess of Sun and Thunder",
+   "Relic1": "Warrior Goddess of Sun and Thunder",
+   "Relic2": "Messenger Traversing Hackerspace, Sacerdos' Relived Ordeal, Warrior Goddess of Sun and Thunder",
+   "Relic3": "",
+   "Relic4": "",
+   "Relic5": "",
+   "Planar Sphere": "HP%",
+   "Link Rope": "Energy Regen Rate",
+   "Planetary Set Concat": "Giant Tree of Rapt Brooding, Broken Keel, Penacony, Land of the Dreams, Lushaka, the Sunken Seas",
+   "Planetary1": "Giant Tree of Rapt Brooding",
+   "Planetary2": "Broken Keel, Penacony, Land of the Dreams, Lushaka, the Sunken Seas",
+   "Planetary3": "",
+   "Planetary4": "",
+   "Planetary5": "",
+   "Substats": "SPD > HP% / CRIT DMG > EFF RES%"
  },
  {
    "Name": "Jade",
