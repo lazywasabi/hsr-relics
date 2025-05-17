@@ -4,6 +4,7 @@
     const BUILD_DATA_URL = 'data/builds.json';
     const RELIC_INFO_URL = 'data/relics.json';
     const appContent = document.getElementById('app-content');
+    const siteTitle = "Honkai: Star Rail Relic Helper";
 
     // --- Dynamic Data (will be populated from RELIC_INFO_URL) ---
     let RELIC_SETS_DATA = [];
@@ -216,6 +217,7 @@
 
     // --- Rendering Functions ---
     function renderHomePage() {
+        document.title = siteTitle;
         appContent.innerHTML = `
             <div class="home-container">
                 <div class="home-column">
@@ -286,6 +288,7 @@
     }
 
     function renderCharacterPage(characterName) {
+        document.title = `${characterName} - ${siteTitle}`;
         const character = characterBuilds.find(c => c.name === characterName);
         if (!character) {
             appContent.innerHTML = `<p>Character not found: ${characterName}</p><p><a href="#">Go Home</a></p>`;
@@ -365,6 +368,8 @@
 
     function renderRelicSetPage(setSlug) {
         const setName = findOriginalSetName(setSlug);
+        document.title = `${setName} - ${siteTitle}`;
+
         // These checks now rely on dynamically populated _DATA arrays
         const isOrnament = ORNAMENT_SETS_DATA.includes(setName);
         const isRelic = RELIC_SETS_DATA.includes(setName);
@@ -524,11 +529,18 @@
 
         if (hash.startsWith('#/characters/')) {
             const charSlug = hash.substring('#/characters/'.length);
-            const charName = allCharacters.find(name => slugify(name) === charSlug);
-            if (charName) renderCharacterPage(charName);
-            else renderHomePage();
+            const charName = allCharacters.find(name => slugify(name) === charSlug) || deslugify(charSlug); // Fallback for title
+            if (charName && allCharacters.includes(charName)) {
+                 renderCharacterPage(charName);
+            } else {
+                 // If character not in allCharacters, still try to render but it will show "not found"
+                 // Set title to what was attempted
+                 document.title = deslugify(charSlug);
+                 renderCharacterPage(deslugify(charSlug)); // This will show not found if it's not a valid char
+            }
         } else if (hash.startsWith('#/relics/')) {
             const relicSlug = hash.substring('#/relics/'.length);
+            // findOriginalSetName will handle deslugification for title even if set not found
             renderRelicSetPage(relicSlug);
         } else {
             renderHomePage();
@@ -586,9 +598,10 @@
                 }
             });
 
-            handleRouteChange();
+            handleRouteChange(); // Initial route handling
         } catch (error) {
             console.error("Failed to load or process data:", error);
+            document.title = `Error - ${siteTitle}`;
             appContent.innerHTML = `<p>Error loading data. Please try again later. Details: ${error.message}</p>`;
         }
     }
