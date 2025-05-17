@@ -469,13 +469,14 @@
         for (const stat of sortedCanonicals) {
             const usersSet = relevantSubstatsMap.get(stat) || new Set();
             const userCount = usersSet.size;
+            const statClass = userCount > 0 ? 'stat-used' : 'stat-unused';
             const usersArray = Array.from(usersSet);
             const charListId = `substat-chars-${slugify(stat)}`;
             const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? 's' : ''}` : `0 character`;
             const toggleClass = userCount > 0 ? '' : 'no-users';
 
             substatSectionHtml += `<tr>
-                                    <td>${stat}</td>
+                                    <td><span class="stat-value ${statClass}">${stat}</span></td>
                                     <td>`;
             if (userCount > 0) {
                 substatSectionHtml += `<span class="char-count-toggle ${toggleClass}" data-target-id="${charListId}">${toggleText}</span>

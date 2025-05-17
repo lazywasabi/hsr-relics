@@ -382,7 +382,7 @@ a:hover {
 .stat-unused {
     background-color: var(--red-color);
     color: white;
-    text-decoration: line-through;
+    /* text-decoration: line-through; */
 }
 
 
