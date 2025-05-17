@@ -391,7 +391,7 @@
 
         const pieceOrder = isOrnament ? ["SPHERE", "ROPE"] : ["BODY", "FEET"];
 
-        let mainStatHtml = '<table class="analysis-table"><thead><tr><th>Piece</th><th>Main Stats & Usage</th></tr></thead><tbody>';
+        let mainStatHtml = '<table class="analysis-table"><thead><tr><th>Main Stat</th><th>Usage</th></tr></thead><tbody>';
 
         for (const piece of pieceOrder) {
             const possibleMainStats = MAIN_STATS_SCHEMA[piece];
@@ -423,7 +423,7 @@
                 const toggleClass = userCount > 0 ? '' : 'no-users';
 
 
-                pieceStatsHtml += `<span class="stat-value ${statClass}">${stat}</span>`;
+                pieceStatsHtml += `<tr><td><span class="stat-value ${statClass}">${stat}</span></td><td>`;
 
                 if (userCount > 0) {
                     pieceStatsHtml += `<span class="char-count-toggle ${toggleClass}" data-target-id="${charListId}">${toggleText}</span>`;
@@ -433,9 +433,9 @@
                 } else {
                     pieceStatsHtml += `<span class="char-count-toggle ${toggleClass}">${toggleText}</span>`;
                 }
-                pieceStatsHtml += '<br>';
+                pieceStatsHtml += '</td></tr>';
             }
-            mainStatHtml += `<tr><td class="main-stat-type">${piece.charAt(0) + piece.slice(1).toLowerCase()}</td><td>${pieceStatsHtml}</td></tr>`;
+            mainStatHtml += `<tr><td class="main-stat-type" colspan="2">${piece.charAt(0) + piece.slice(1).toLowerCase()}</td></tr>${pieceStatsHtml}`;
         }
         mainStatHtml += '</tbody></table>';
 
@@ -461,7 +461,7 @@
         });
 
         let substatSectionHtml = '<p>This shows which substats are generally useful for characters who equip this set.</p>';
-        substatSectionHtml += '<table class="analysis-table"><thead><tr><th>Substat</th><th>Characters Using This (with this set)</th></tr></thead><tbody>';
+        substatSectionHtml += '<table class="analysis-table"><thead><tr><th>Substat</th><th>Usage</th></tr></thead><tbody>';
 
         // const sortedCanonicals = [...SUBSTATS_CANONICAL].sort();
         const sortedCanonicals = [...SUBSTATS_CANONICAL]
