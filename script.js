@@ -623,17 +623,6 @@
                     if (targetElement) {
                         const isHidden = targetElement.style.display === 'none' || targetElement.style.display === '';
                         targetElement.style.display = isHidden ? 'block' : 'none';
-
-                        // Close other open tooltips in the same table
-                        const table = toggleElement.closest('.analysis-table');
-                        if (table) {
-                            const allTooltipsInTable = table.querySelectorAll('.character-list-tooltip');
-                            allTooltipsInTable.forEach(tooltip => {
-                                if (tooltip !== targetElement) {
-                                    tooltip.style.display = 'none';
-                                }
-                            });
-                        }
                     }
                 }
             });
