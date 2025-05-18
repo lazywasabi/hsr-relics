@@ -268,7 +268,13 @@
         const listElement = document.getElementById('char-list');
         if (!listElement) return;
         const filtered = characters.filter(name => name.toLowerCase().includes(filter.toLowerCase()));
-        listElement.innerHTML = filtered.map(name => `<li><a href="#/characters/${slugify(name)}">${name}</a></li>`).join('');
+        listElement.innerHTML = filtered.map(name => `
+            <li>
+                <a href="#/characters/${slugify(name)}">
+                    <img src="images/character/${slugify(name)}.webp" alt="" class="item-icon character-list-icon" onerror="this.style.display='none'">
+                    ${name}
+                </a>
+            </li>`).join('');
     }
 
     function renderRelicSetList(sets, filter = '') {
@@ -280,11 +286,23 @@
 
         cavernList.innerHTML = filteredSets
             .filter(s => s.type === 'Relic')
-            .map(s => `<li><a href="#/relics/${slugify(s.name)}">${s.name}</a></li>`).join('');
+            .map(s => `
+                <li>
+                    <a href="#/relics/${slugify(s.name)}">
+                        <img src="images/relic/${slugify(s.name)}.webp" alt="" class="item-icon relic-list-icon" onerror="this.style.display='none'">
+                        ${s.name}
+                    </a>
+                </li>`).join('');
 
         planetaryList.innerHTML = filteredSets
             .filter(s => s.type === 'Ornament')
-            .map(s => `<li><a href="#/relics/${slugify(s.name)}">${s.name}</a></li>`).join('');
+            .map(s => `
+                <li>
+                    <a href="#/relics/${slugify(s.name)}">
+                        <img src="images/relic/${slugify(s.name)}.webp" alt="" class="item-icon relic-list-icon" onerror="this.style.display='none'">
+                        ${s.name}
+                    </a>
+                </li>`).join('');
     }
 
     function renderCharacterPage(characterName) {
@@ -297,7 +315,11 @@
 
         const formatSetList = (sets) => {
             if (!sets || sets.length === 0) return 'N/A';
-            return sets.map(s => `<a href="#/relics/${slugify(s)}" class="set-name">${s}</a>`).join(' / ');
+            return sets.map(s => `
+                <a href="#/relics/${slugify(s)}" class="set-name-link">
+                    <img src="images/relic/${slugify(s)}.webp" alt="" class="item-icon inline-icon" onerror="this.style.display='none'">
+                    <span class="set-name-text">${s}</span>
+                </a>`).join(' / ');
         };
 
         const relicRecommendations = [
@@ -311,7 +333,10 @@
         appContent.innerHTML = `
             <div class="page-container">
                 <div class="page-header">
-                    <h2>${character.name} Recommended Builds</h2>
+                    <div class="page-title-with-icon">
+                        <img src="images/character-sticker/${slugify(character.name)}.webp" alt="" class="page-main-icon" onerror="this.style.display='none'">
+                        <h2>${character.name} Recommended Builds</h2>
+                    </div>
                     <a href="#" class="back-button">Back to Lists</a>
                 </div>
 
@@ -336,7 +361,7 @@
                      <div class="build-grid build-planer-ornaments">
                         ${ornamentRecommendations.length > 0 ? ornamentRecommendations.map((ornamentSet, index) => `
                             <div class="stat-group">
-                                <h4>Option ${index + 1}</h4>
+                                <h4>Option ${index + 1} (2pc)</h4>
                                 <p>${formatSetList(ornamentSet)}</p>
                             </div>
                         `).join('') : '<p>No specific ornament set recommendations found.</p>'}
@@ -370,7 +395,6 @@
         const setName = findOriginalSetName(setSlug);
         document.title = `${setName} - ${siteTitle}`;
 
-        // These checks now rely on dynamically populated _DATA arrays
         const isOrnament = ORNAMENT_SETS_DATA.includes(setName);
         const isRelic = RELIC_SETS_DATA.includes(setName);
 
@@ -394,9 +418,9 @@
         }
 
 
-        const pieceOrder = isOrnament ? ["SPHERE", "ROPE"] : ["BODY", "FEET"];
+        const pieceOrder = isOrnament ? ["SPHERE", "ROPE"] : ["BODY", "FEET"]; // Relics focus on Body/Feet for set page, Head/Hands are fixed.
 
-        let mainStatHtml = '<table class="analysis-table"><thead><tr><th>Main Stat</th><th>Usage</th></tr></thead><tbody>';
+        let mainStatHtml = '<table class="analysis-table"><thead><tr><th>Main Stat</th><th>Used By</th></tr></thead><tbody>';
 
         for (const piece of pieceOrder) {
             const possibleMainStats = MAIN_STATS_SCHEMA[piece];
@@ -424,7 +448,7 @@
                 const userCount = users.length;
                 const statClass = userCount > 0 ? 'stat-used' : 'stat-unused';
                 const charListId = `mainstat-chars-${slugify(piece)}-${slugify(stat)}`;
-                const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? 's' : ''}` : `0 character`;
+                const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? 's' : ''}` : `0 characters`;
                 const toggleClass = userCount > 0 ? '' : 'no-users';
 
 
@@ -433,7 +457,11 @@
                 if (userCount > 0) {
                     pieceStatsHtml += `<span class="char-count-toggle ${toggleClass}" data-target-id="${charListId}">${toggleText}</span>`;
                     pieceStatsHtml += `<div id="${charListId}" class="character-list-tooltip" style="display:none;">
-                                        ${users.map(u => `<a href="#/characters/${slugify(u.name)}">${u.name}</a>`).join('')}
+                                        ${users.map(u => `
+                                            <a href="#/characters/${slugify(u.name)}" class="char-tooltip-link">
+                                                <img src="images/character/${slugify(u.name)}.webp" alt="" class="item-icon tooltip-icon" onerror="this.style.display='none'">
+                                                ${u.name}
+                                            </a>`).join('')}
                                       </div>`;
                 } else {
                     pieceStatsHtml += `<span class="char-count-toggle ${toggleClass}">${toggleText}</span>`;
@@ -465,9 +493,8 @@
             }
         });
 
-        let substatSectionHtml = '<p>This shows which substats are generally useful for characters who equip this set.</p>';
-        substatSectionHtml += '<table class="analysis-table"><thead><tr><th>Substat</th><th>Usage</th></tr></thead><tbody>';
-
+        let substatSectionHtml = '<p>This shows which substats are generally prioritized by characters who equip this set.</p>';
+        substatSectionHtml += '<table class="analysis-table"><thead><tr><th>Substat</th><th>Prioritized By</th></tr></thead><tbody>';
         // const sortedCanonicals = [...SUBSTATS_CANONICAL].sort();
         const sortedCanonicals = [...SUBSTATS_CANONICAL]
 
@@ -475,9 +502,9 @@
             const usersSet = relevantSubstatsMap.get(stat) || new Set();
             const userCount = usersSet.size;
             const statClass = userCount > 0 ? 'stat-used' : 'stat-unused';
-            const usersArray = Array.from(usersSet);
+            const usersArray = Array.from(usersSet).sort();
             const charListId = `substat-chars-${slugify(stat)}`;
-            const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? 's' : ''}` : `0 character`;
+            const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? 's' : ''}` : `0 characters`;
             const toggleClass = userCount > 0 ? '' : 'no-users';
 
             substatSectionHtml += `<tr>
@@ -486,7 +513,11 @@
             if (userCount > 0) {
                 substatSectionHtml += `<span class="char-count-toggle ${toggleClass}" data-target-id="${charListId}">${toggleText}</span>
                                         <div id="${charListId}" class="character-list-tooltip" style="display:none;">
-                                            ${usersArray.map(u_name => `<a href="#/characters/${slugify(u_name)}">${u_name}</a>`).join('')}
+                                            ${usersArray.map(u_name => `
+                                                <a href="#/characters/${slugify(u_name)}" class="char-tooltip-link">
+                                                    <img src="images/character/${slugify(u_name)}.webp" alt="" class="item-icon tooltip-icon" onerror="this.style.display='none'">
+                                                    ${u_name}
+                                                </a>`).join('')}
                                         </div>`;
             } else {
                 substatSectionHtml += `<span class="char-count-toggle ${toggleClass}">${toggleText}</span>`;
@@ -500,7 +531,10 @@
         appContent.innerHTML = `
             <div class="page-container">
                 <div class="page-header">
-                    <h2>${setName}</h2>
+                     <div class="page-title-with-icon">
+                        <img src="images/relic/${slugify(setName)}.webp" alt="" class="page-main-icon" onerror="this.style.display='none'">
+                        <h2>${setName}</h2>
+                    </div>
                     <a href="#" class="back-button">Back to Lists</a>
                 </div>
 
@@ -512,7 +546,7 @@
                     ${mainStatHtml}
                 </div>
                 <div class="relic-info-section">
-                    <h3>Substat Usage Analysis</h3>
+                    <h3>Substat Priority Analysis</h3>
                     ${substatSectionHtml}
                 </div>
             </div>
@@ -529,18 +563,15 @@
 
         if (hash.startsWith('#/characters/')) {
             const charSlug = hash.substring('#/characters/'.length);
-            const charName = allCharacters.find(name => slugify(name) === charSlug) || deslugify(charSlug); // Fallback for title
+            const charName = allCharacters.find(name => slugify(name) === charSlug) || deslugify(charSlug); 
             if (charName && allCharacters.includes(charName)) {
                  renderCharacterPage(charName);
             } else {
-                 // If character not in allCharacters, still try to render but it will show "not found"
-                 // Set title to what was attempted
-                 document.title = deslugify(charSlug);
-                 renderCharacterPage(deslugify(charSlug)); // This will show not found if it's not a valid char
+                 document.title = `${deslugify(charSlug)} - ${siteTitle}`;
+                 renderCharacterPage(deslugify(charSlug)); 
             }
         } else if (hash.startsWith('#/relics/')) {
             const relicSlug = hash.substring('#/relics/'.length);
-            // findOriginalSetName will handle deslugification for title even if set not found
             renderRelicSetPage(relicSlug);
         } else {
             renderHomePage();
@@ -562,9 +593,8 @@
             const rawBuildData = await buildDataResponse.json();
             const relicInfoJson = await relicInfoResponse.json();
 
-            relicSetDetailsData = relicInfoJson; // Store relic set details (bonuses, etc.)
+            relicSetDetailsData = relicInfoJson; 
 
-            // Populate RELIC_SETS_DATA and ORNAMENT_SETS_DATA from relicSetDetailsData
             const tempRelicSets = new Set();
             const tempOrnamentSets = new Set();
 
@@ -581,8 +611,7 @@
             ORNAMENT_SETS_DATA = Array.from(tempOrnamentSets).sort();
 
             ALL_KNOWN_SETS_SORTED = [...RELIC_SETS_DATA, ...ORNAMENT_SETS_DATA].sort((a, b) => b.length - a.length);
-
-            // Now process character build data, which relies on ALL_KNOWN_SETS_SORTED for parsing
+            
             processData(rawBuildData);
 
             appContent.addEventListener('click', function(event) {
@@ -594,11 +623,22 @@
                     if (targetElement) {
                         const isHidden = targetElement.style.display === 'none' || targetElement.style.display === '';
                         targetElement.style.display = isHidden ? 'block' : 'none';
+
+                        // Close other open tooltips in the same table
+                        const table = toggleElement.closest('.analysis-table');
+                        if (table) {
+                            const allTooltipsInTable = table.querySelectorAll('.character-list-tooltip');
+                            allTooltipsInTable.forEach(tooltip => {
+                                if (tooltip !== targetElement) {
+                                    tooltip.style.display = 'none';
+                                }
+                            });
+                        }
                     }
                 }
             });
 
-            handleRouteChange(); // Initial route handling
+            handleRouteChange(); 
         } catch (error) {
             console.error("Failed to load or process data:", error);
             document.title = `Error - ${siteTitle}`;
