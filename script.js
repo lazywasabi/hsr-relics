@@ -316,10 +316,12 @@
         const formatSetList = (sets) => {
             if (!sets || sets.length === 0) return 'N/A';
             return sets.map(s => `
-                <a href="#/relics/${slugify(s)}" class="set-name-link">
-                    <img src="images/relic/${slugify(s)}.webp" alt="" class="item-icon inline-icon" onerror="this.style.display='none'">
-                    <span class="set-name-text">${s}</span>
-                </a>`).join(' / ');
+                <span class="set-name-link">
+                    <a href="#/relics/${slugify(s)}">
+                        <img src="images/relic/${slugify(s)}.webp" alt="" class="item-icon inline-icon" onerror="this.style.display='none'">
+                        <span class="set-name-text">${s}</span>
+                    </a>
+                </span>`).join('');
         };
 
         const relicRecommendations = [
@@ -349,7 +351,7 @@
                             return `
                             <div class="stat-group">
                                 <h4>${optionTitle}</h4>
-                                <p>${formatSetList(relicSetOption)}</p>
+                                <p class="relic-option-list">${formatSetList(relicSetOption)}</p>
                             </div>
                         `;
                         }).join('') : '<p>No specific relic set recommendations found.</p>'}
@@ -361,8 +363,8 @@
                      <div class="build-grid build-planer-ornaments">
                         ${ornamentRecommendations.length > 0 ? ornamentRecommendations.map((ornamentSet, index) => `
                             <div class="stat-group">
-                                <h4>Option ${index + 1} (2pc)</h4>
-                                <p>${formatSetList(ornamentSet)}</p>
+                                <h4>Option ${index + 1}</h4>
+                                <p class="relic-option-list">${formatSetList(ornamentSet)}</p>
                             </div>
                         `).join('') : '<p>No specific ornament set recommendations found.</p>'}
                     </div>
