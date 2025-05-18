@@ -113,14 +113,14 @@ a:hover {
 }
 
 .tooltip-icon {
-    width: 2rem;
-    height: 2rem;
-    margin-right: 5px;
+    width: 5rem;
+    height: 2.75rem;
+    margin-right: 0.6rem;
 }
 
 .page-main-icon {
-    width: 4.8rem;
-    height: 4.8rem;
+    width: 6rem;
+    height: 6rem;
     border-radius: 4px;
     object-fit: cover;
 }
@@ -464,17 +464,14 @@ a:hover {
     text-decoration: none;
 }
 
-
 .character-list-tooltip {
     font-size: 0.9rem;
     margin-top: 0.5rem;
-    max-height: 256px;
-    overflow-y: auto;
 }
 
 .character-list-tooltip a.char-tooltip-link {
     color: var(--primary-text-color);
-    padding: 0.3rem 0.6rem;
+    padding-right: 0.6rem;
     margin: 0.25rem 0.25rem 0.25rem 0;
     border-radius: 3px;
     background-color: #252525;
@@ -520,11 +517,6 @@ a:hover {
         align-items: flex-start;
     }
 
-    .page-main-icon {
-        width: 6rem;
-        height: 6rem;
-    }
-
     .build-grid,
     .build-grid.build-main-stats {
         grid-template-columns: 1fr;
@@ -549,6 +541,15 @@ a:hover {
     }
     */
 
+    .character-list-tooltip {
+        max-height: 256px;
+        overflow-y: auto;
+    }
+
+    .tooltip-icon {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
 }
 
 /* Scrollbar styling */
