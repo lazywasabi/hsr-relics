@@ -2,36 +2,58 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Honkai: Star Rail Relic Helper</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚂</text></svg>">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Honkai: Star Rail Relic Helper</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚂</text></svg>">
 </head>
 
 <body>
-    <header>
-        <h1>
-            <a href="#">Honkai: Star Rail Relic Helper</a>
-        </h1>
-    </header>
+  <header>
+    <h1>
+      <a href="#">Honkai: Star Rail Relic Helper</a>
+    </h1>
+  </header>
 
-    <main id="app-content">
-        <div class="loading-container">
-            <div class="spinner"></div>
-            <p>Loading data...</p>
-        </div>
-    </main>
+  <main id="app-content">
+    <div class="loading-container">
+      <div class="spinner"></div>
+      <p>Loading data...</p>
+    </div>
+  </main>
 
-    <footer>
-        <p>Character build data from <a href="https://www.prydwen.gg/star-rail/" target="_blank">Prydwen.gg</a> via <a href="https://docs.google.com/spreadsheets/d/1SQK2xihURxiA2PTp0lAiRYXlphnm-EFa3CoKaUO7UOc/edit?gid=1312600809#gid=1312600809" target="_blank">Relic Salvaging Helper Spreadsheets by arthurmauk</a>. Relics data from <a href="https://honkai-star-rail.fandom.com/wiki/Relic/Sets" target="_blank">Honkai: Star Rail Wiki</a>.</p>
-        <p>Website built with Gemini AI - <a href="https://github.com/lazywasabi/hsr-relics" target="_blank">Source Code</a></p>
-    </footer>
+  <nav id="main-nav">
+    <ul>
+      <li><a href="#/" data-nav-path="/">All</a></li>
+      <li><a href="#/relics" data-nav-path="/relics">Cavern</a></li>
+      <li><a href="#/ornaments" data-nav-path="/ornaments">Planar</a></li>
+      <li><a href="#/characters" data-nav-path="/characters">Chars</a></li>
+      <li><button id="nav-search-button">Search</button></li>
+    </ul>
+  </nav>
 
-    <script src="script.js"></script>
+  <div id="search-popup" style="display: none;">
+    <div id="search-popup-content">
+      <div class="search-container-popup">
+        <input type="text" id="universal-search-input" class="search-input" placeholder="Search relics, ornaments, characters...">
+        <button class="search-clear-btn" id="universal-search-clear-btn" tabindex="-1">×</button>
+      </div>
+      <div id="universal-search-results" class="search-results-container">
+        <p class="search-prompt">Type to start searching.</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>Character build data from <a href="https://www.prydwen.gg/star-rail/" target="_blank">Prydwen.gg</a> via <a href="https://docs.google.com/spreadsheets/d/1SQK2xihURxiA2PTp0lAiRYXlphnm-EFa3CoKaUO7UOc/edit?gid=1312600809#gid=1312600809" target="_blank">Relic Salvaging Helper Spreadsheets by arthurmauk</a>. Relics data from <a href="https://honkai-star-rail.fandom.com/wiki/Relic/Sets" target="_blank">Honkai: Star Rail Wiki</a>.</p>
+    <p>Website built with Gemini AI - <a href="https://github.com/lazywasabi/hsr-relics" target="_blank">Source Code</a></p>
+  </footer>
+
+  <script src="script.js"></script>
 </body>
 
 </html>
