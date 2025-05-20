@@ -1,278 +1,324 @@
 [
- {
-   "Name": "Band of Sizzling Thunder",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Lightning DMG by 10%.",
-   "4-Piece Bonus": "When the wearer uses Skill, increases the wearer's ATK by 20% for 1 turn(s)."
- },
- {
-   "Name": "Belobog of the Architects",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's DEF by 15%. When the wearer's Effect Hit Rate is 50% or higher, the wearer gains an extra 15% DEF.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Bone Collection's Serene Demesne",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's Max HP by 12%. When the wearer's Max HP is 5000 or higher, increases the wearer's and their memosprite's CRIT DMG by 28%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Broken Keel",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's Effect RES by 10%. When the wearer's Effect RES is at 30% or higher, all allies' CRIT DMG increases by 10%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Celestial Differentiator",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's CRIT DMG by 16%. When the wearer's current CRIT DMG reaches 120% or higher, after entering battle, the wearer's CRIT Rate increases by 60% until the end of their first attack.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Champion of Streetwise Boxing",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Physical DMG by 10%.",
-   "4-Piece Bonus": "After the wearer attacks or is hit, their ATK increases by 5% for the rest of the battle. This effect can stack up to 5 time(s)."
- },
- {
-   "Name": "Duran, Dynasty of Running Wolves",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "When allies use follow-up attacks, the wearer receives 1 stack of Merit, stacking up to 5 times. Every stack of Merit increases the DMG dealt by the wearer's follow-up attacks by 5%. When there are 5 stacks, additionally increases the wearer's CRIT DMG by 25%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Eagle of Twilight Line",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Wind DMG by 10%.",
-   "4-Piece Bonus": "After the wearer uses Ultimate, their action is Advanced Forward by 25%."
- },
- {
-   "Name": "Firesmith of Lava-Forging",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Fire DMG by 10%.",
-   "4-Piece Bonus": "Increases the wearer's Skill DMG by 12%. After unleashing Ultimate, increases the wearer's Fire DMG by 12% for next attack."
- },
- {
-   "Name": "Firmament Frontline: Glamoth",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's ATK by 12%. When the wearer's SPD is equal to or higher than 135/160, the wearer deals 12%/18% more DMG.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Fleet of the Ageless",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's Max HP by 12%. When the wearer's SPD reaches 120 or higher, all allies' ATK increases by 8%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Forge of the Kalpagni Lantern",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increase the wearer's SPD by 6%. When the wearer hits enemy targets with Fire Weakness, the wearer's Break Effect increases by 40%, lasting for 1 turn(s).",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Genius of Brilliant Stars",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Quantum DMG by 10%.",
-   "4-Piece Bonus": "When the wearer deals DMG to the target enemy, ignores 10% DEF. If the target enemy has Quantum Weakness, the wearer additionally ignores 10% DEF."
- },
- {
-   "Name": "Giant Tree of Rapt Brooding",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's SPD by 6%. When the wearer's SPD is 135/180 or higher, the wearer and their memosprite's Outgoing Healing increases by 12%/20%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Guard of Wuthering Snow",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Reduces DMG taken by 8%.",
-   "4-Piece Bonus": "At the beginning of the turn, if the wearer's HP is equal to or less than 50% of their Max HP, restores HP equal to 8% of their Max HP and regenerates 5 Energy."
- },
- {
-   "Name": "Hero of Triumphant Song",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases ATK by 12%.",
-   "4-Piece Bonus": "While the wearer's memosprite is on the field, increases the wearer's SPD by 6%. When the wearer's memosprite attacks, increases the wearer and memosprite's CRIT DMG by 30% for 2 turn(s)."
- },
- {
-   "Name": "Hunter of Glacial Forest",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Ice DMG by 10%.",
-   "4-Piece Bonus": "After the wearer unleashes their Ultimate, their CRIT DMG increases by 25% for 2 turn(s)."
- },
- {
-   "Name": "Inert Salsotto",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's CRIT Rate by 8%. When the wearer's current CRIT Rate reaches 50% or higher, the wearer's Ultimate and follow-up attack DMG increases by 15%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Iron Cavalry Against the Scourge",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Break Effect by 16%.",
-   "4-Piece Bonus": "If the wearer's Break Effect is 150% or higher, ignores 10% of the enemy target's DEF when dealing Break DMG to them. When the wearer's Break Effect is 250% or higher, the Super Break DMG they deal to enemy targets additionally ignores 15% of the targets' DEF."
- },
- {
-   "Name": "Izumo Gensei and Takama Divine Realm",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's ATK by 12%. When entering battle, if at least one other ally follows the same Path as the wearer, then the wearer's CRIT Rate increases by 12%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Knight of Purity Palace",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases DEF by 15%.",
-   "4-Piece Bonus": "Increases the max DMG that can be absorbed by the shield created by the wearer by 20%."
- },
- {
-   "Name": "Longevous Disciple",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Max HP by 12%.",
-   "4-Piece Bonus": "When the wearer is hit or has their HP consumed by an ally or themselves, their CRIT Rate increases by 8% for 2 turn(s) and up to 2 stacks."
- },
- {
-   "Name": "Lushaka, the Sunken Seas",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's Energy Regeneration Rate by 5%. If the wearer is not the first character in the team lineup, then increase the ATK of the first character in the team lineup by 12%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Messenger Traversing Hackerspace",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases SPD by 6%.",
-   "4-Piece Bonus": "When the wearer uses their Ultimate on an ally, SPD for all allies increases by 12% for 1 turn(s). This effect cannot be stacked."
- },
- {
-   "Name": "Musketeer of Wild Wheat",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "ATK increases by 12%.",
-   "4-Piece Bonus": "The wearer's SPD increases by 6% and Basic ATK DMG increases by 10%."
- },
- {
-   "Name": "Pan-Cosmic Commercial Enterprise",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's Effect Hit Rate by 10%. Meanwhile, the wearer's ATK increases by an amount that is equal to 25% of the current Effect Hit Rate, up to a maximum of 25%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Passerby of Wandering Cloud",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Outgoing Healing by 10%.",
-   "4-Piece Bonus": "At the beginning of the battle, immediately recovers 1 Skill Point."
- },
- {
-   "Name": "Penacony, Land of the Dreams",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases wearer's Energy Regeneration Rate by 5%. Increases DMG for all other allies with the same DMG Type as the wearer by 10%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Pioneer Diver of Dead Waters",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases DMG dealt to enemies with debuff by 12%.",
-   "4-Piece Bonus": "Increases CRIT Rate by 4%. The wearer deals 8%/12% increased CRIT DMG to enemies with at least 2/3 debuffs. After the wearer inflicts a debuff on enemy targets, the aforementioned effects increase by 100%, lasting for 1 turn."
- },
- {
-   "Name": "Poet of Mourning Collapse",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Quantum DMG by 10%.",
-   "4-Piece Bonus": "Decreases the wearer's SPD by 8%. Before entering battle, if the wearer's SPD is less than 110/95, increases the wearer's CRIT Rate by 20%/32%. This effect also applies to the wearer's memosprite."
- },
- {
-   "Name": "Prisoner in Deep Confinement",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases ATK by 12%.",
-   "4-Piece Bonus": "For every DoT the target enemy is afflicted with, the wearer will ignore 6% of target's DEF when dealing DMG to them. This effect is valid for a max of 3 DoTs."
- },
- {
-   "Name": "Rutilant Arena",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's CRIT Rate by 8%. When the wearer's current CRIT Rate reaches 70% or higher, the wearer's Basic ATK and Skill DMG increase by 20%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Sacerdos' Relived Ordeal",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases SPD by 6%.",
-   "4-Piece Bonus": "When using Skill or Ultimate on one ally target, increases the ability target's CRIT DMG by 18%, lasting for 2 turn(s). This effect can stack up to 2 time(s)."
- },
- {
-   "Name": "Scholar Lost in Erudition",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases CRIT Rate by 8%.",
-   "4-Piece Bonus": "Increases DMG dealt by Skill and Ultimate by 20%. After using Ultimate, additionally increases the DMG dealt by the next Skill by 25%."
- },
- {
-   "Name": "Sigonia, the Unclaimed Desolation",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's CRIT Rate by 4%. When an enemy target gets defeated, the wearer's CRIT DMG increases by 4%, stacking up to 10 time(s).",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Space Sealing Station",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's ATK by 12%. When the wearer's SPD reaches 120 or higher, the wearer's ATK increases by an extra 12%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Sprightly Vonwacq",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's Energy Regeneration Rate by 5%. When the wearer's SPD reaches 120 or higher, the wearer's action is Advanced Forward by 40% immediately upon entering battle.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Talia: Kingdom of Banditry",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's Break Effect by 16%. When the wearer's SPD reaches 145 or higher, the wearer's Break effect increases by an extra 20%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "The Ashblazing Grand Duke",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases follow-up attack DMG by 20%.",
-   "4-Piece Bonus": "When the wearer uses follow-up attacks against the target enemy, increase the wearer's ATK by 6% for every time the follow-up attack deals DMG. This effect can stack for a maximum of 8 times and lasts for 3 turns. This effect is removed the next time the wearer uses a follow-up attack."
- },
- {
-   "Name": "The Wind-Soaring Valorous",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "ATK increases by 12%.",
-   "4-Piece Bonus": "Increases the wearer's CRIT Rate by 6%. When the wearer uses a follow-up attack, increase the DMG dealt by their Ultimate by 36%, lasting for 1 turn(s)."
- },
- {
-   "Name": "The Wondrous BananAmusement Park",
-   "Type": "Planetary Ornament Set",
-   "2-Piece Bonus": "Increases the wearer's CRIT DMG by 16%. When a target summoned by the wearer is on the field, CRIT DMG additionally increases by 32%.",
-   "4-Piece Bonus": ""
- },
- {
-   "Name": "Thief of Shooting Meteor",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Break Effect by 16%.",
-   "4-Piece Bonus": "Increases the wearer's Break Effect by 16%. When the wearer inflicts Weakness Break on an enemy, regenerates 3 Energy."
- },
- {
-   "Name": "Warrior Goddess of Sun and Thunder",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases SPD by 6%.",
-   "4-Piece Bonus": "When the wearer and their memosprite provide healing to ally targets aside from themselves, the wearer gains 'Gentle Rain,' which can be triggered up to 1 time per turn, lasting for 2 turn(s). While the wearer has 'Gentle Rain,' increases their SPD by 6% and all allies' CRIT DMG by 15%. This effect cannot be stacked."
- },
- {
-   "Name": "Wastelander of Banditry Desert",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Imaginary DMG by 10%.",
-   "4-Piece Bonus": "When attacking debuffed enemies, the wearer's CRIT Rate increases by 10%, and their CRIT DMG increases by 20% against Imprisoned enemies."
- },
- {
-   "Name": "Watchmaker, Master of Dream Machinations",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases Break Effect by 16%.",
-   "4-Piece Bonus": "When the wearer uses their Ultimate on an ally, Break Effect for all allies increases by 30% for 2 turn(s). This effect cannot be stacked."
- },
- {
-   "Name": "Wavestrider Captain",
-   "Type": "Relic Set",
-   "2-Piece Bonus": "Increases CRIT DMG by 16%.",
-   "4-Piece Bonus": "When the wearer becomes the target of another ally target's ability, gains 1 stack of 'Help,' stacking up to 2 time(s). If there are 2 stack(s) of 'Help' when the wearer uses their Ultimate, consumes all 'Help' to increase the wearer's ATK by 48% for 1 turn(s)."
- }
+  {
+    "ID": 101,
+    "Name": "Passerby of Wandering Cloud",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Outgoing Healing by 10%.",
+    "4-Piece Bonus": "At the beginning of the battle, immediately recovers 1 Skill Point."
+  },
+  {
+    "ID": 102,
+    "Name": "Musketeer of Wild Wheat",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "ATK increases by 12%.",
+    "4-Piece Bonus": "The wearer's SPD increases by 6% and Basic ATK DMG increases by 10%."
+  },
+  {
+    "ID": 103,
+    "Name": "Knight of Purity Palace",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases DEF by 15%.",
+    "4-Piece Bonus": "Increases the max DMG that can be absorbed by the shield created by the wearer by 20%."
+  },
+  {
+    "ID": 104,
+    "Name": "Hunter of Glacial Forest",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Ice DMG by 10%.",
+    "4-Piece Bonus": "After the wearer unleashes their Ultimate, their CRIT DMG increases by 25% for 2 turn(s)."
+  },
+  {
+    "ID": 105,
+    "Name": "Champion of Streetwise Boxing",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Physical DMG by 10%.",
+    "4-Piece Bonus": "After the wearer attacks or is hit, their ATK increases by 5% for the rest of the battle. This effect can stack up to 5 time(s)."
+  },
+  {
+    "ID": 106,
+    "Name": "Guard of Wuthering Snow",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Reduces DMG taken by 8%.",
+    "4-Piece Bonus": "At the beginning of the turn, if the wearer's HP is equal to or less than 50% of their Max HP, restores HP equal to 8% of their Max HP and regenerates 5 Energy."
+  },
+  {
+    "ID": 107,
+    "Name": "Firesmith of Lava-Forging",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Fire DMG by 10%.",
+    "4-Piece Bonus": "Increases the wearer's Skill DMG by 12%. After unleashing Ultimate, increases the wearer's Fire DMG by 12% for next attack."
+  },
+  {
+    "ID": 108,
+    "Name": "Genius of Brilliant Stars",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Quantum DMG by 10%.",
+    "4-Piece Bonus": "When the wearer deals DMG to the target enemy, ignores 10% DEF. If the target enemy has Quantum Weakness, the wearer additionally ignores 10% DEF."
+  },
+  {
+    "ID": 109,
+    "Name": "Band of Sizzling Thunder",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Lightning DMG by 10%.",
+    "4-Piece Bonus": "When the wearer uses Skill, increases the wearer's ATK by 20% for 1 turn(s)."
+  },
+  {
+    "ID": 110,
+    "Name": "Eagle of Twilight Line",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Wind DMG by 10%.",
+    "4-Piece Bonus": "After the wearer uses Ultimate, their action is Advanced Forward by 25%."
+  },
+  {
+    "ID": 111,
+    "Name": "Thief of Shooting Meteor",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Break Effect by 16%.",
+    "4-Piece Bonus": "Increases the wearer's Break Effect by 16%. When the wearer inflicts Weakness Break on an enemy, regenerates 3 Energy."
+  },
+  {
+    "ID": 112,
+    "Name": "Wastelander of Banditry Desert",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Imaginary DMG by 10%.",
+    "4-Piece Bonus": "When attacking debuffed enemies, the wearer's CRIT Rate increases by 10%, and their CRIT DMG increases by 20% against Imprisoned enemies."
+  },
+  {
+    "ID": 113,
+    "Name": "Longevous Disciple",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Max HP by 12%.",
+    "4-Piece Bonus": "When the wearer is hit or has their HP consumed by an ally or themselves, their CRIT Rate increases by 8% for 2 turn(s) and up to 2 stacks."
+  },
+  {
+    "ID": 114,
+    "Name": "Messenger Traversing Hackerspace",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases SPD by 6%.",
+    "4-Piece Bonus": "When the wearer uses their Ultimate on an ally, SPD for all allies increases by 12% for 1 turn(s). This effect cannot be stacked."
+  },
+  {
+    "ID": 115,
+    "Name": "The Ashblazing Grand Duke",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases follow-up attack DMG by 20%.",
+    "4-Piece Bonus": "When the wearer uses follow-up attacks against the target enemy, increase the wearer's ATK by 6% for every time the follow-up attack deals DMG. This effect can stack for a maximum of 8 times and lasts for 3 turns. This effect is removed the next time the wearer uses a follow-up attack."
+  },
+  {
+    "ID": 116,
+    "Name": "Prisoner in Deep Confinement",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases ATK by 12%.",
+    "4-Piece Bonus": "For every DoT the target enemy is afflicted with, the wearer will ignore 6% of target's DEF when dealing DMG to them. This effect is valid for a max of 3 DoTs."
+  },
+  {
+    "ID": 117,
+    "Name": "Pioneer Diver of Dead Waters",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases DMG dealt to enemies with debuff by 12%.",
+    "4-Piece Bonus": "Increases CRIT Rate by 4%. The wearer deals 8%/12% increased CRIT DMG to enemies with at least 2/3 debuffs. After the wearer inflicts a debuff on enemy targets, the aforementioned effects increase by 100%, lasting for 1 turn."
+  },
+  {
+    "ID": 118,
+    "Name": "Watchmaker, Master of Dream Machinations",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Break Effect by 16%.",
+    "4-Piece Bonus": "When the wearer uses their Ultimate on an ally, Break Effect for all allies increases by 30% for 2 turn(s). This effect cannot be stacked."
+  },
+  {
+    "ID": 119,
+    "Name": "Iron Cavalry Against the Scourge",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Break Effect by 16%.",
+    "4-Piece Bonus": "If the wearer's Break Effect is 150% or higher, ignores 10% of the enemy target's DEF when dealing Break DMG to them. When the wearer's Break Effect is 250% or higher, the Super Break DMG they deal to enemy targets additionally ignores 15% of the targets' DEF."
+  },
+  {
+    "ID": 120,
+    "Name": "The Wind-Soaring Valorous",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "ATK increases by 12%.",
+    "4-Piece Bonus": "Increases the wearer's CRIT Rate by 6%. When the wearer uses a follow-up attack, increase the DMG dealt by their Ultimate by 36%, lasting for 1 turn(s)."
+  },
+  {
+    "ID": 121,
+    "Name": "Sacerdos' Relived Ordeal",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases SPD by 6%.",
+    "4-Piece Bonus": "When using Skill or Ultimate on one ally target, increases the ability target's CRIT DMG by 18%, lasting for 2 turn(s). This effect can stack up to 2 time(s)."
+  },
+  {
+    "ID": 122,
+    "Name": "Scholar Lost in Erudition",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases CRIT Rate by 8%.",
+    "4-Piece Bonus": "Increases DMG dealt by Skill and Ultimate by 20%. After using Ultimate, additionally increases the DMG dealt by the next Skill by 25%."
+  },
+  {
+    "ID": 123,
+    "Name": "Hero of Triumphant Song",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases ATK by 12%.",
+    "4-Piece Bonus": "While the wearer's memosprite is on the field, increases the wearer's SPD by 6%. When the wearer's memosprite attacks, increases the wearer and memosprite's CRIT DMG by 30% for 2 turn(s)."
+  },
+  {
+    "ID": 124,
+    "Name": "Poet of Mourning Collapse",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases Quantum DMG by 10%.",
+    "4-Piece Bonus": "Decreases the wearer's SPD by 8%. Before entering battle, if the wearer's SPD is less than 110/95, increases the wearer's CRIT Rate by 20%/32%. This effect also applies to the wearer's memosprite."
+  },
+  {
+    "ID": 125,
+    "Name": "Warrior Goddess of Sun and Thunder",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases SPD by 6%.",
+    "4-Piece Bonus": "When the wearer and their memosprite provide healing to ally targets aside from themselves, the wearer gains \"Gentle Rain,\" which can be triggered up to 1 time per turn, lasting for 2 turn(s). While the wearer has \"Gentle Rain,\" increases their SPD by 6% and all allies' CRIT DMG by 15%. This effect cannot be stacked."
+  },
+  {
+    "ID": 126,
+    "Name": "Wavestrider Captain",
+    "Type": "Relic Set",
+    "2-Piece Bonus": "Increases CRIT DMG by 16%.",
+    "4-Piece Bonus": "When the wearer becomes the target of another ally target's ability, gains 1 stack of \"Help,\" stacking up to 2 time(s). If there are 2 stack(s) of \"Help\" when the wearer uses their Ultimate, consumes all \"Help\" to increase the wearer's ATK by 48% for 1 turn(s)."
+  },
+  {
+    "ID": 301,
+    "Name": "Space Sealing Station",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's ATK by 12%. When the wearer's SPD reaches 120 or higher, the wearer's ATK increases by an extra 12%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 302,
+    "Name": "Fleet of the Ageless",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's Max HP by 12%. When the wearer's SPD reaches 120 or higher, all allies' ATK increases by 8%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 303,
+    "Name": "Pan-Cosmic Commercial Enterprise",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's Effect Hit Rate by 10%. Meanwhile, the wearer's ATK increases by an amount that is equal to 25% of the current Effect Hit Rate, up to a maximum of 25%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 304,
+    "Name": "Belobog of the Architects",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's DEF by 15%. When the wearer's Effect Hit Rate is 50% or higher, the wearer gains an extra 15% DEF.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 305,
+    "Name": "Celestial Differentiator",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's CRIT DMG by 16%. When the wearer's current CRIT DMG reaches 120% or higher, after entering battle, the wearer's CRIT Rate increases by 60% until the end of their first attack.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 306,
+    "Name": "Inert Salsotto",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's CRIT Rate by 8%. When the wearer's current CRIT Rate reaches 50% or higher, the wearer's Ultimate and follow-up attack DMG increases by 15%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 307,
+    "Name": "Talia: Kingdom of Banditry",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's Break Effect by 16%. When the wearer's SPD reaches 145 or higher, the wearer's Break effect increases by an extra 20%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 308,
+    "Name": "Sprightly Vonwacq",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's Energy Regeneration Rate by 5%. When the wearer's SPD reaches 120 or higher, the wearer's action is Advanced Forward by 40% immediately upon entering battle.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 309,
+    "Name": "Rutilant Arena",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's CRIT Rate by 8%. When the wearer's current CRIT Rate reaches 70% or higher, the wearer's Basic ATK and Skill DMG increase by 20%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 310,
+    "Name": "Broken Keel",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's Effect RES by 10%. When the wearer's Effect RES is at 30% or higher, all allies' CRIT DMG increases by 10%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 311,
+    "Name": "Firmament Frontline: Glamoth",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's ATK by 12%. When the wearer's SPD is equal to or higher than 135/160, the wearer deals 12%/18% more DMG.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 312,
+    "Name": "Penacony, Land of the Dreams",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases wearer's Energy Regeneration Rate by 5%. Increases DMG for all other allies with the same DMG Type as the wearer by 10%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 313,
+    "Name": "Sigonia, the Unclaimed Desolation",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's CRIT Rate by 4%. When an enemy target gets defeated, the wearer's CRIT DMG increases by 4%, stacking up to 10 time(s).",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 314,
+    "Name": "Izumo Gensei and Takama Divine Realm",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's ATK by 12%. When entering battle, if at least one other ally follows the same Path as the wearer, then the wearer's CRIT Rate increases by 12%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 315,
+    "Name": "Duran, Dynasty of Running Wolves",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "When allies use follow-up attacks, the wearer receives 1 stack of Merit, stacking up to 5 times. Every stack of Merit increases the DMG dealt by the wearer's follow-up attacks by 5%. When there are 5 stacks, additionally increases the wearer's CRIT DMG by 25%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 316,
+    "Name": "Forge of the Kalpagni Lantern",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increase the wearer's SPD by 6%. When the wearer hits enemy targets with Fire Weakness, the wearer's Break Effect increases by 40%, lasting for 1 turn(s).",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 317,
+    "Name": "Lushaka, the Sunken Seas",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's Energy Regeneration Rate by 5%. If the wearer is not the first character in the team lineup, then increase the ATK of the first character in the team lineup by 12%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 318,
+    "Name": "The Wondrous BananAmusement Park",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's CRIT DMG by 16%. When a target summoned by the wearer is on the field, CRIT DMG additionally increases by 32%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 319,
+    "Name": "Bone Collection's Serene Demesne",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's Max HP by 12%. When the wearer's Max HP is 5000 or higher, increases the wearer's and their memosprite's CRIT DMG by 28%.",
+    "4-Piece Bonus": ""
+  },
+  {
+    "ID": 320,
+    "Name": "Giant Tree of Rapt Brooding",
+    "Type": "Planetary Ornament Set",
+    "2-Piece Bonus": "Increases the wearer's SPD by 6%. When the wearer's SPD is 135/180 or higher, the wearer and their memosprite's Outgoing Healing increases by 12%/20%.",
+    "4-Piece Bonus": ""
+  }
 ]
