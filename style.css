@@ -10,7 +10,6 @@
   --border-color: #444;
   --font-family: 'Inter', sans-serif;
   --nav-height: 60px;
-  /* For main nav */
 }
 
 * {
@@ -28,7 +27,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
   padding-bottom: var(--nav-height);
-  /* Space for fixed nav */
 }
 
 header {
@@ -36,7 +34,6 @@ header {
   padding: 1rem 2rem;
   text-align: center;
   border-bottom: 1px solid var(--border-color);
-  /* Removed position: sticky; top: 0; z-index: 100; */
 }
 
 header h1 a {
@@ -131,7 +128,7 @@ a:hover {
   object-fit: cover;
 }
 
-/* New Main Navigation */
+/* Main Navigation */
 #main-nav {
   position: fixed;
   bottom: 0;
@@ -310,8 +307,6 @@ a:hover {
   gap: 2rem;
 }
 
-/* Removed desktop grid layout for .home-page-layout */
-
 .home-section {
   background-color: var(--surface-color);
   padding: 1.5rem;
@@ -329,15 +324,10 @@ a:hover {
 
 /* Item list styling for homepage sections and dedicated list pages */
 .item-list-scroll-container {
-  /* max-height: 60vh; Removed */
   overflow-y: auto;
   /* Will only show scrollbar if content overflows viewport/container */
   padding-right: 0.5rem;
   /* For scrollbar, if it appears */
-}
-
-.item-list-scroll-container.full-page-list {
-  /* max-height: none; This is now the default, class can be phased out if not needed elsewhere */
 }
 
 .content-list {
@@ -394,7 +384,6 @@ a:hover {
 .page-header {
   display: flex;
   justify-content: space-between;
-  /* Will now just push title left if no other elements */
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
@@ -427,8 +416,6 @@ a:hover {
   margin: 0;
 }
 
-/* .back-button styles removed */
-
 .build-section,
 .relic-info-section {
   margin-bottom: 2rem;
@@ -458,7 +445,6 @@ a:hover {
     grid-template-columns: repeat(4, 1fr);
   }
 }
-
 
 .stat-group {
   background-color: var(--bg-color);
@@ -497,8 +483,6 @@ a:hover {
   row-gap: 4px;
   column-gap: 12px;
 }
-
-.set-name-link {}
 
 .set-name-link a {
   display: inline-flex;
@@ -652,7 +636,6 @@ a:hover {
   text-decoration: none;
 }
 
-
 /* Responsive */
 @media (max-width: 767px) {
   body {
@@ -671,8 +654,6 @@ a:hover {
   .home-section {
     padding: 1rem;
   }
-
-  /* .item-list-scroll-container max-height removed for mobile as well */
 
   .page-header {
     flex-direction: column;

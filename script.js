@@ -1,9 +1,7 @@
-// --- START OF FILE script.js ---
-
 (function () {
   "use strict";
 
-  const BUILD_DATA_URL = "data/characters.json";
+  const BUILD_DATA_URL = "data/charact ers.json";
   const RELIC_INFO_URL = "data/relics.json";
   const appContent = document.getElementById("app-content");
   const siteTitle = "Honkai: Star Rail Relic Helper";
@@ -811,4 +809,3 @@
   window.addEventListener("hashchange", handleRouteChange);
   initApp();
 })();
-// --- END OF FILE script.js ---
