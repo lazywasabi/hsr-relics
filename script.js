@@ -780,7 +780,11 @@
           } else if (event.key === "ArrowUp") {
             event.preventDefault();
             if (searchableListItems.length > 0) {
-              currentSearchFocusIndex = (currentSearchFocusIndex - 1 + searchableListItems.length) % searchableListItems.length;
+              if (currentSearchFocusIndex === -1) {
+                currentSearchFocusIndex = searchableListItems.length - 1;
+              } else {
+                currentSearchFocusIndex = (currentSearchFocusIndex - 1 + searchableListItems.length) % searchableListItems.length;
+              }
               addSearchItemFocus(currentSearchFocusIndex);
             }
           } else if (event.key === "Enter") {
