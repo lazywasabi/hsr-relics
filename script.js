@@ -261,19 +261,25 @@
     appContent.innerHTML = `
       <div class="page-container home-page-layout">
           <section class="home-section">
-              <h2>Cavern Relics</h2>
+              <div class="page-header">
+                  <h2>Cavern Relics</h2>
+              </div>
               <div class="item-list-scroll-container">
                   ${_renderItemsList(RELIC_SETS_DATA, "cavern-relic", "Cavern Relics", "relic-list-icon")}
               </div>
           </section>
           <section class="home-section">
-              <h2>Planar Ornaments</h2>
+              <div class="page-header">
+                  <h2>Planar Ornaments</h2>
+              </div>
               <div class="item-list-scroll-container">
                   ${_renderItemsList(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "relic-list-icon")}
               </div>
           </section>
           <section class="home-section">
-              <h2>Characters</h2>
+              <div class="page-header">
+                  <h2>Characters</h2>
+              </div>
               <div class="item-list-scroll-container">
                   ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon")}
               </div>
@@ -285,7 +291,7 @@
     document.title = `Cavern Relics - ${siteTitle}`;
     appContent.innerHTML = `
       <div class="page-container">
-          <div class="page-header simple-header"><h2>Cavern Relics</h2></div>
+          <div class="page-header"><h2>Cavern Relics</h2></div>
           <div class="item-list-scroll-container full-page-list">
               ${_renderItemsList(RELIC_SETS_DATA, "cavern-relic", "Cavern Relics", "relic-list-icon")}
           </div>
@@ -296,7 +302,7 @@
     document.title = `Planar Ornaments - ${siteTitle}`;
     appContent.innerHTML = `
       <div class="page-container">
-           <div class="page-header simple-header"><h2>Planar Ornaments</h2></div>
+           <div class="page-header"><h2>Planar Ornaments</h2></div>
           <div class="item-list-scroll-container full-page-list">
               ${_renderItemsList(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "relic-list-icon")}
           </div>
@@ -307,7 +313,7 @@
     document.title = `Characters - ${siteTitle}`;
     appContent.innerHTML = `
       <div class="page-container">
-          <div class="page-header simple-header"><h2>Characters</h2></div>
+          <div class="page-header"><h2>Characters</h2></div>
           <div class="item-list-scroll-container full-page-list">
               ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon")}
           </div>
@@ -354,7 +360,7 @@
           <div class="page-header">
               <div class="page-title-with-icon">
                   <img src="images/character-sticker/${slugify(character.name)}.webp" alt="${character.name}" class="page-main-icon" loading="lazy">
-                  <h2>${character.name} Recommended Builds</h2>
+                  <h2>${character.name}</h2>
               </div>
           </div>
           <div class="build-section">
@@ -588,11 +594,9 @@
 
     if (!query) {
       universalSearchResults.innerHTML = '<p class="search-prompt">Type to start searching.</p>';
-      universalSearchClearBtn.style.display = "none";
       searchableListItems = [];
       return;
     }
-    universalSearchClearBtn.style.display = "inline-block";
 
     let html = "";
     const matchingRelics = RELIC_SETS_DATA
@@ -602,7 +606,7 @@
       html += '<h3>Cavern Relics</h3><ul class="search-results-list">';
       matchingRelics.forEach((name) => {
         const slug = slugify(name);
-        html += `<li><a href="#/relics/${slug}" tabindex="-1"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
+        html += `<li><a href="#/relics/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
       });
       html += "</ul>";
     }
@@ -614,7 +618,7 @@
       html += '<h3>Planar Ornaments</h3><ul class="search-results-list">';
       matchingOrnaments.forEach((name) => {
         const slug = slugify(name);
-        html += `<li><a href="#/ornaments/${slug}" tabindex="-1"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
+        html += `<li><a href="#/ornaments/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
       });
       html += "</ul>";
     }
@@ -626,13 +630,13 @@
       html += '<h3>Characters</h3><ul class="search-results-list">';
       matchingCharacters.forEach((name) => {
         const slug = slugify(name);
-        html += `<li><a href="#/characters/${slug}" tabindex="-1"><img src="images/character/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
+        html += `<li><a href="#/characters/${slug}"><img src="images/character/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
       });
       html += "</ul>";
     }
 
     if (!html) {
-      universalSearchResults.innerHTML = "<p>No results found.</p>";
+      universalSearchResults.innerHTML = '<p class="search-prompt">No results found.</p>';
       searchableListItems = [];
     } else {
       universalSearchResults.innerHTML = html;
@@ -762,13 +766,12 @@
           closeSearchPopup();
         }
       });
-      universalSearchClearBtn.style.display = "none"; // Initially hidden
 
       // Global keydown listeners
       document.addEventListener("keydown", (event) => {
         if (searchPopup.style.display === "flex") {
           if (event.key === "Escape") closeSearchPopup();
-          else if (event.key === "ArrowDown") {
+          else if (event.key === "ArrowDown" || event.key === "Tab") {
             event.preventDefault();
             if (searchableListItems.length > 0) {
               currentSearchFocusIndex = (currentSearchFocusIndex + 1) % searchableListItems.length;
