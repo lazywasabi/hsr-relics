@@ -771,13 +771,13 @@
       document.addEventListener("keydown", (event) => {
         if (searchPopup.style.display === "flex") {
           if (event.key === "Escape") closeSearchPopup();
-          else if (event.key === "ArrowDown" || event.key === "Tab") {
+          else if (event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey)) {
             event.preventDefault();
             if (searchableListItems.length > 0) {
               currentSearchFocusIndex = (currentSearchFocusIndex + 1) % searchableListItems.length;
               addSearchItemFocus(currentSearchFocusIndex);
             }
-          } else if (event.key === "ArrowUp") {
+          } else if (event.key === "ArrowUp" || (event.key === "Tab" && event.shiftKey)) {
             event.preventDefault();
             if (searchableListItems.length > 0) {
               if (currentSearchFocusIndex === -1) {
@@ -788,7 +788,15 @@
               addSearchItemFocus(currentSearchFocusIndex);
             }
           } else if (event.key === "Enter") {
-            if (currentSearchFocusIndex !== -1 && searchableListItems[currentSearchFocusIndex]) {
+            if (document.activeElement === universalSearchInput && currentSearchFocusIndex === -1) {
+              if (searchableListItems.length > 0) {
+                event.preventDefault();
+                const firstResultLink = searchableListItems[0].querySelector("a");
+                if (firstResultLink) {
+                  firstResultLink.click();
+                }
+              }
+            } else if (currentSearchFocusIndex !== -1 && searchableListItems[currentSearchFocusIndex]) {
               event.preventDefault();
               const linkToClick = searchableListItems[currentSearchFocusIndex].querySelector("a");
               if (linkToClick) linkToClick.click();
