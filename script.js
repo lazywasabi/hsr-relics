@@ -452,7 +452,7 @@
                   ${relicRecommendations.length > 0
                     ? relicRecommendations.map((relicSetOption, index) => {
                         // Check if it's a 2+2 piece combination from Cavern Relics
-                        const isTwoPlusTwo = relicSetOption.length === 2 &&
+                        const isTwoPlusTwo = relicSetOption.length >= 2 &&
                                            relicSetOption.every(setName => RELIC_SETS_DATA.includes(setName));
                         const optionTitle = `Option ${index + 1}${isTwoPlusTwo ? " (2 pcs + 2 pcs)" : ""}`;
                         return `
@@ -639,7 +639,7 @@
           ${setInfoHtml}
           <div class="relic-interactive-filter-area">
               <h3>Stat Usage Analysis</h3>
-              <p>Select main stats and substats to find characters who benefit from this set with those stats. Stats marked with (0) are not used by any character with this set and are disabled.</p>
+              <p>Select main stats and substats to find characters who benefit from this set with those stats. Stats marked with (0) are not used by any character with this set.</p>
               
               <div class="filter-controls-panel">
                   <div class="filter-section">
@@ -659,8 +659,8 @@
                       </div>
                       <div class="filter-section-content" id="sub-stats-content">
                           <div class="substats-logic-toggle">
-                              <label><input type="radio" name="substat-logic" value="OR" ${substatLogic === 'OR' ? 'checked' : ''}> OR (any selected substat)</label>
-                              <label><input type="radio" name="substat-logic" value="AND" ${substatLogic === 'AND' ? 'checked' : ''}> AND (all selected substats)</label>
+                              <label><input type="radio" name="substat-logic" value="OR" ${substatLogic === 'OR' ? 'checked' : ''}> Match any</label>
+                              <label><input type="radio" name="substat-logic" value="AND" ${substatLogic === 'AND' ? 'checked' : ''}> Match all</label>
                           </div>
                           ${subStatsFilterHtml}
                       </div>
@@ -721,7 +721,7 @@
         });
       }
 
-      characterCountDisplay.textContent = `Showing ${filteredCharacters.length} of ${charactersUsingSet.length} character(s) for this set.`;
+      characterCountDisplay.textContent = `Showing ${filteredCharacters.length} of ${charactersUsingSet.length} character(s) for this set`;
 
       if (filteredCharacters.length > 0) {
         characterListContainer.innerHTML = _renderItemsList(filteredCharacters.map(c => c.name), "character", "Matching Characters", "character-list-icon");
