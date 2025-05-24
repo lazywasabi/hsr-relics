@@ -764,9 +764,8 @@ footer {
 /* --- Character List Specific Grid --- */
 .item-list-scroll-container.character-list .item-grid-list {
   display: grid;
-  gap: 0.75rem;
+  gap: 1.25rem;
   grid-template-columns: repeat(auto-fill, minmax(6rem, 1fr));
-  /* Smaller cards for characters */
 }
 
 .item-list-scroll-container.character-list .item-grid-list li a {
