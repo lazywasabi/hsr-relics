@@ -42,7 +42,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding-bottom: var(--nav-height);
+  padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
   /* Space for fixed bottom nav */
   font-family: var(--font-family);
   line-height: 1.6;
@@ -181,7 +181,8 @@ footer {
   display: flex;
   justify-content: center;
   width: 100%;
-  height: var(--nav-height);
+  height: calc(var(--nav-height) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
   background-color: rgba(21, 21, 21, 0.8);
   /* #151515 with alpha */
   backdrop-filter: blur(4px);
@@ -582,7 +583,7 @@ footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   cursor: pointer;
   /* Indicate clickable for collapse */
 }
@@ -815,18 +816,8 @@ footer {
 
 /* --- Mobile Screens (max-width: 767px) --- */
 @media (max-width: 767px) {
-  body {
-    /* Adjust bottom padding for nav bar and safe area on iOS */
-    padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
-  }
-
   header h1 {
     font-size: 1.4rem;
-  }
-
-  #main-nav {
-    height: calc(var(--nav-height) + env(safe-area-inset-bottom));
-    padding-bottom: env(safe-area-inset-bottom);
   }
 
   main {
@@ -873,16 +864,6 @@ footer {
   .stat-icon {
     width: 1.3rem;
     height: 1.3rem;
-  }
-
-  .substats-logic-toggle {
-    flex-direction: column;
-    /* Stack radio buttons */
-    align-items: flex-start;
-    gap: 0.25rem;
-    /* Adjust gap for vertical stacking */
-    margin-top: 0.5rem;
-    width: 100%;
   }
 
   .filter-controls-panel {
