@@ -1,4 +1,4 @@
-(function () {
+(function() {
   "use strict";
 
   const BUILD_DATA_URL = "data/characters.json";
@@ -45,9 +45,16 @@
   );
 
   const SUBSTAT_ALIASES = { // Keys should be lowercase for consistent matching
-    hp: "HP%", def: "DEF%", atk: "ATK%", ehr: "Effect Hit Rate",
-    "ehr%": "Effect Hit Rate", "eff res": "Effect RES", "eff res%": "Effect RES",
-    spd: "Speed", "crit rate": "CRIT Rate", "crit dmg": "CRIT DMG",
+    hp: "HP%",
+    def: "DEF%",
+    atk: "ATK%",
+    ehr: "Effect Hit Rate",
+    "ehr%": "Effect Hit Rate",
+    "eff res": "Effect RES",
+    "eff res%": "Effect RES",
+    spd: "Speed",
+    "crit rate": "CRIT Rate",
+    "crit dmg": "CRIT DMG",
     "break effect%": "Break Effect",
   };
 
@@ -66,6 +73,13 @@
   let searchableListItems = [];
   let currentSearchFocusIndex = -1;
   let lastUniversalSearchQueryValue = ""; // Remembers search query for current session
+
+  // Filter persistence state
+  let previousPageInfo = {
+    type: null, // 'relicSet', 'characterPage', etc.
+    slug: null, // e.g., 'genius-of-brilliant-stars'
+    filters: null // { selectedMainStats, selectedSubStats, substatLogic }
+  };
 
   // --- Utility Functions ---
   function slugify(text) {
@@ -95,9 +109,17 @@
     }
     const potentialName = deslugify(slug);
     if (ALL_KNOWN_SETS_SLUG_MAP.has(slugify(potentialName))) {
-        return potentialName;
+      return potentialName;
     }
     return potentialName;
+  }
+
+  function getCharacterPieceStats(character, pieceType) {
+    if (!character || !pieceType) return [];
+    const pTypeLower = pieceType.toLowerCase();
+    if (pTypeLower === "sphere") return character.planarSphere || [];
+    if (pTypeLower === "rope") return character.linkRope || [];
+    return character[pTypeLower] || [];
   }
 
   // --- Data Parsing ---
@@ -125,7 +147,10 @@
   }
 
   function parseSubstats(substatStr) {
-    if (!substatStr) return { clean: [], comment: "" };
+    if (!substatStr) return {
+      clean: [],
+      comment: ""
+    };
 
     const originalComment = substatStr;
     let tempStr = substatStr.replace(/\([^)]*\)|\[[^\]]*\]/g, "").trim();
@@ -156,12 +181,12 @@
           }
         }
         if (!matchedCanonicalStat) {
-            for (const alias in SUBSTAT_ALIASES) {
-                if (potentialStat.includes(alias)) {
-                    matchedCanonicalStat = SUBSTAT_ALIASES[alias];
-                    break;
-                }
+          for (const alias in SUBSTAT_ALIASES) {
+            if (potentialStat.includes(alias)) {
+              matchedCanonicalStat = SUBSTAT_ALIASES[alias];
+              break;
             }
+          }
         }
       }
 
@@ -170,17 +195,20 @@
         seenSubstats.add(matchedCanonicalStat);
       }
     }
-    return { clean: cleanSubstats, comment: originalComment };
+    return {
+      clean: cleanSubstats,
+      comment: originalComment
+    };
   }
 
   // Helper to aggregate sets from multiple relic/planetary slots
   function aggregateAllSets(item, basePropName, numSlots = 5) {
     const allSets = new Set();
     for (let i = 1; i <= numSlots; i++) {
-        const slotKey = `${basePropName}${i}`;
-        if (item[slotKey]) {
-            parseSetListString(item[slotKey]).forEach(set => allSets.add(set));
-        }
+      const slotKey = `${basePropName}${i}`;
+      if (item[slotKey]) {
+        parseSetListString(item[slotKey]).forEach(set => allSets.add(set));
+      }
     }
     return Array.from(allSets);
   }
@@ -199,22 +227,17 @@
         Release: item.Release,
         body: item.Body ? item.Body.split(",").map((s) => s.trim()) : [],
         feet: item.Feet ? item.Feet.split(",").map((s) => s.trim()) : [],
-        // Store aggregated sets; these are used by renderRelicSetPage
         relicSetsAll: allRelicSets,
         planetarySetsAll: allPlanetarySets,
-        // Keep individual relic options for display on character page
         relic1: parseSetListString(item.Relic1),
         relic2: parseSetListString(item.Relic2),
         relic3: parseSetListString(item.Relic3),
         relic4: parseSetListString(item.Relic4),
         relic5: parseSetListString(item.Relic5),
-        planarSphere: item["Planar Sphere"]
-          ? item["Planar Sphere"].split(",").map((s) => s.trim())
-          : [],
-        linkRope: item["Link Rope"]
-          ? item["Link Rope"].split(",").map((s) => s.trim())
-          : [],
-        // Keep individual planetary options for display on character page
+        planarSphere: item["Planar Sphere"] ?
+          item["Planar Sphere"].split(",").map((s) => s.trim()) : [],
+        linkRope: item["Link Rope"] ?
+          item["Link Rope"].split(",").map((s) => s.trim()) : [],
         planetary1: parseSetListString(item.Planetary1),
         planetary2: parseSetListString(item.Planetary2),
         planetary3: parseSetListString(item.Planetary3),
@@ -224,7 +247,6 @@
         substatsComment: substatsParsed.comment,
       };
     });
-    // Sorting of characterBuilds and population of allCharacters happens in initApp
   }
 
   // --- Rendering Functions ---
@@ -233,25 +255,29 @@
     let listHtml = "";
     if (items.length > 0) {
       listHtml = items.map((name) => {
-          const slug = slugify(name);
-          let href = "", imgSrc = "";
-          if (itemType === "cavern-relic") {
-            href = `#/relics/${slug}`; imgSrc = `images/relic/${slug}.webp`;
-          } else if (itemType === "planar-ornament") {
-            href = `#/ornaments/${slug}`; imgSrc = `images/relic/${slug}.webp`;
-          } else if (itemType === "character") {
-            href = `#/characters/${slug}`; imgSrc = `images/character/${slug}.webp`;
-          }
-          return `
+        const slug = slugify(name);
+        let href = "",
+          imgSrc = "";
+        if (itemType === "cavern-relic") {
+          href = `#/relics/${slug}`;
+          imgSrc = `images/relic/${slug}.webp`;
+        } else if (itemType === "planar-ornament") {
+          href = `#/ornaments/${slug}`;
+          imgSrc = `images/relic/${slug}.webp`;
+        } else if (itemType === "character") {
+          href = `#/characters/${slug}`;
+          imgSrc = `images/character/${slug}.webp`;
+        }
+        return `
             <li>
-                <a href="${href}">
+                <a href="${href}" title="${name}">
                     <img src="${imgSrc}" alt="" class="item-icon ${itemClass}" loading="lazy">
-                    ${name}
+                    <span>${name}</span>
                 </a>
             </li>`;
-        }).join("");
+      }).join("");
     } else {
-      listHtml = `<li>No ${listTitle.toLowerCase()} found.</li>`;
+      listHtml = `<li class="no-results-in-list">No ${listTitle.toLowerCase()} found.</li>`;
     }
     return `<ul class="content-list item-grid-list">${listHtml}</ul>`;
   }
@@ -280,11 +306,16 @@
               <div class="page-header">
                   <h2>Characters</h2>
               </div>
-              <div class="item-list-scroll-container">
+              <div class="item-list-scroll-container character-list">
                   ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon")}
               </div>
           </section>
       </div>`;
+    previousPageInfo = {
+      type: 'home',
+      slug: null,
+      filters: null
+    };
   }
 
   function renderCavernRelicsPage() {
@@ -296,6 +327,11 @@
               ${_renderItemsList(RELIC_SETS_DATA, "cavern-relic", "Cavern Relics", "relic-list-icon")}
           </div>
       </div>`;
+    previousPageInfo = {
+      type: 'relicList',
+      slug: null,
+      filters: null
+    };
   }
 
   function renderPlanarOrnamentsPage() {
@@ -307,6 +343,11 @@
               ${_renderItemsList(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "relic-list-icon")}
           </div>
       </div>`;
+    previousPageInfo = {
+      type: 'ornamentList',
+      slug: null,
+      filters: null
+    };
   }
 
   function renderCharactersListPage() {
@@ -314,10 +355,15 @@
     appContent.innerHTML = `
       <div class="page-container">
           <div class="page-header"><h2>Characters</h2></div>
-          <div class="item-list-scroll-container full-page-list">
+          <div class="item-list-scroll-container full-page-list character-list">
               ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon")}
           </div>
       </div>`;
+    previousPageInfo = {
+      type: 'characterList',
+      slug: null,
+      filters: null
+    };
   }
 
   function renderCharacterPage(characterName) {
@@ -325,26 +371,30 @@
     const character = characterBuilds.find((c) => c.name === characterName);
     if (!character) {
       appContent.innerHTML = `<div class="page-container"><p>Character not found: ${characterName}</p><p><a href="#">Go Home</a></p></div>`;
+      previousPageInfo = {
+        type: 'error',
+        slug: null,
+        filters: null
+      };
       return;
     }
 
     const formatSetList = (sets) => {
       if (!sets || sets.length === 0) return "N/A";
       return sets.map((s) => {
-          const isOrnament = ORNAMENT_SETS_DATA.includes(s);
-          const slug = slugify(s);
-          const href = isOrnament ? `#/ornaments/${slug}` : `#/relics/${slug}`;
-          return `
+        const isOrnament = ORNAMENT_SETS_DATA.includes(s);
+        const slug = slugify(s);
+        const href = isOrnament ? `#/ornaments/${slug}` : `#/relics/${slug}`;
+        return `
             <span class="set-name-link">
                 <a href="${href}">
                     <img src="images/relic/${slug}.webp" alt="" class="item-icon inline-icon" loading="lazy">
                     <span class="set-name-text">${s}</span>
                 </a>
             </span>`;
-        }).join("");
+      }).join("");
     };
 
-    // Relic/Ornament recommendations still come from individual relic1-5, planetary1-5 fields
     const relicRecommendations = [
       character.relic1, character.relic2, character.relic3,
       character.relic4, character.relic5,
@@ -413,9 +463,14 @@
               </div>
           </div>
       </div>`;
+    previousPageInfo = {
+      type: 'characterPage',
+      slug: slugify(characterName),
+      filters: null
+    };
   }
 
-  function renderRelicSetPage(setSlug) { // isOrnamentContext no longer needed as we check both global lists
+  function renderRelicSetPage(setSlug) {
     const setName = findOriginalSetName(setSlug);
     document.title = `${setName} - ${siteTitle}`;
 
@@ -424,6 +479,11 @@
 
     if (!isActualOrnament && !isActualRelic) {
       appContent.innerHTML = `<div class="page-container"><p>Relic set not found: ${setName}</p><p><a href="#">Go Home</a></p></div>`;
+      previousPageInfo = {
+        type: 'error',
+        slug: null,
+        filters: null
+      };
       return;
     }
 
@@ -439,97 +499,97 @@
       }
       setInfoHtml += `</div>`;
     }
-    
-    // Use the aggregated set lists: relicSetsAll or planetarySetsAll
+
     const charactersUsingSet = characterBuilds.filter(char => {
       return isActualOrnament ?
-             char.planetarySetsAll.includes(setName) :
-             char.relicSetsAll.includes(setName);
-    }); // These characters are already sorted by Release(desc)/ID(asc)
-
-    const pieceOrder = isActualOrnament ? ["SPHERE", "ROPE"] : ["BODY", "FEET"];
-    let mainStatHtml = '<table class="analysis-table"><thead><tr><th>Main Stat</th><th>Used By</th></tr></thead><tbody>';
-
-    for (const piece of pieceOrder) {
-      const possibleMainStats = MAIN_STATS_SCHEMA[piece];
-      let pieceStatsHtml = "";
-
-      for (const stat of possibleMainStats) {
-        const users = charactersUsingSet.filter(char => {
-          let charPieceStats = [];
-          if (piece === "BODY") charPieceStats = char.body;
-          else if (piece === "FEET") charPieceStats = char.feet;
-          else if (piece === "SPHERE") charPieceStats = char.planarSphere;
-          else if (piece === "ROPE") charPieceStats = char.linkRope;
-          return charPieceStats.includes(stat);
-        });
-
-        const userCount = users.length;
-        const statClass = userCount > 0 ? "stat-used" : "stat-unused";
-        const charListId = `mainstat-chars-${slugify(piece)}-${slugify(stat)}`;
-        const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? "s" : ""}` : `0 characters`;
-        const toggleClass = userCount > 0 ? "" : "no-users";
-
-        pieceStatsHtml += `<tr><td><span class="stat-value ${statClass}">${stat}</span></td><td>`;
-        if (userCount > 0) {
-          pieceStatsHtml += `<span class="char-count-toggle ${toggleClass}" data-target-id="${charListId}">${toggleText}</span>`;
-          pieceStatsHtml += `<div id="${charListId}" class="character-list-tooltip" style="display:none;">
-            ${users.map(u => `
-                <a href="#/characters/${slugify(u.name)}" class="char-tooltip-link">
-                    <img src="images/character/${slugify(u.name)}.webp" alt="" class="item-icon tooltip-icon" loading="lazy">
-                    ${u.name}
-                </a>`).join("")}
-            </div>`;
-        } else {
-          pieceStatsHtml += `<span class="char-count-toggle ${toggleClass}">${toggleText}</span>`;
-        }
-        pieceStatsHtml += "</td></tr>";
-      }
-      if (possibleMainStats.length > 0) {
-        mainStatHtml += `<tr><td class="main-stat-type" colspan="2">${piece.charAt(0) + piece.slice(1).toLowerCase()}</td></tr>${pieceStatsHtml}`;
-      }
-    }
-    mainStatHtml += "</tbody></table>";
-
-    const relevantSubstatsMap = new Map();
-    charactersUsingSet.forEach(char => {
-      char.substatsClean.forEach(sub => {
-        if (!relevantSubstatsMap.has(sub)) {
-          relevantSubstatsMap.set(sub, []);
-        }
-        relevantSubstatsMap.get(sub).push(char); // Store sorted character objects
-      });
+        char.planetarySetsAll.includes(setName) :
+        char.relicSetsAll.includes(setName);
     });
 
-    let substatSectionHtml = "<p>This shows which substats are generally prioritized by characters who equip this set.</p>";
-    substatSectionHtml += '<table class="analysis-table"><thead><tr><th>Substat</th><th>Prioritized By</th></tr></thead><tbody>';
-    
-    for (const stat of SUBSTATS_CANONICAL) { // Iterate to maintain consistent order
-      const usersArrayWithDetails = relevantSubstatsMap.get(stat) || [];
-      const userCount = usersArrayWithDetails.length;
-      const statClass = userCount > 0 ? "stat-used" : "stat-unused";
-      const charListId = `substat-chars-${slugify(stat)}`;
-      const toggleText = userCount > 0 ? `${userCount} character${userCount !== 1 ? "s" : ""}` : `0 characters`;
-      const toggleClass = userCount > 0 ? "" : "no-users";
+    // Filter state initialization
+    let selectedMainStats = {
+      BODY: [],
+      FEET: [],
+      SPHERE: [],
+      ROPE: []
+    };
+    let selectedSubStats = [];
+    let substatLogic = 'OR';
 
-      substatSectionHtml += `<tr>
-          <td><span class="stat-value ${statClass}">${stat}</span></td>
-          <td>`;
-      if (userCount > 0) {
-        substatSectionHtml += `<span class="char-count-toggle ${toggleClass}" data-target-id="${charListId}">${toggleText}</span>
-            <div id="${charListId}" class="character-list-tooltip" style="display:none;">
-                ${usersArrayWithDetails.map(u => `
-                    <a href="#/characters/${slugify(u.name)}" class="char-tooltip-link">
-                        <img src="images/character/${slugify(u.name)}.webp" alt="" class="item-icon tooltip-icon" loading="lazy">
-                        ${u.name}
-                    </a>`).join("")}
-            </div>`;
-      } else {
-        substatSectionHtml += `<span class="char-count-toggle ${toggleClass}">${toggleText}</span>`;
+    // Load filters from sessionStorage if available (for back navigation)
+    const cacheKey = `relicFilterState_${setSlug}`;
+    const cachedFiltersJson = sessionStorage.getItem(cacheKey);
+    if (cachedFiltersJson) {
+      try {
+        const cachedFilters = JSON.parse(cachedFiltersJson);
+        selectedMainStats = cachedFilters.selectedMainStats || selectedMainStats;
+        selectedSubStats = cachedFilters.selectedSubStats || selectedSubStats;
+        substatLogic = cachedFilters.substatLogic || substatLogic;
+        sessionStorage.removeItem(cacheKey); // Clear after loading
+      } catch (e) {
+        console.error("Error parsing cached filters:", e);
+        sessionStorage.removeItem(cacheKey); // Clear corrupted data
       }
-      substatSectionHtml += `</td></tr>`;
     }
-    substatSectionHtml += "</tbody></table>";
+
+    // Update global previousPageInfo for potential save on navigation
+    previousPageInfo = {
+      type: 'relicSet',
+      slug: setSlug,
+      filters: {
+        selectedMainStats,
+        selectedSubStats,
+        substatLogic
+      }
+    };
+
+    const displayablePieceOrder = isActualOrnament ? ["SPHERE", "ROPE"] : ["BODY", "FEET"];
+    let mainStatsFilterHtml = '';
+
+    displayablePieceOrder.forEach(piece => {
+      const possibleMainStats = MAIN_STATS_SCHEMA[piece];
+      if (possibleMainStats && possibleMainStats.length > 0) { // Head/Hands have fixed main stats
+        mainStatsFilterHtml += `<div class="filter-piece-group" data-piece-type="${piece}">
+                <h5>${piece.charAt(0) + piece.slice(1).toLowerCase()}</h5>
+                <div class="stat-options-grid">`;
+        possibleMainStats.forEach(stat => {
+          const usersCount = charactersUsingSet.filter(char => {
+            const charPieceStats = getCharacterPieceStats(char, piece);
+            return charPieceStats.includes(stat);
+          }).length;
+          const isUnused = usersCount === 0;
+          const isActive = selectedMainStats[piece]?.includes(stat);
+          mainStatsFilterHtml += `
+                    <button class="stat-option main-stat-option ${isUnused ? 'unused-stat' : ''} ${isActive ? 'active' : ''}" 
+                            data-stat-type="main" data-piece="${piece}" data-value="${stat}" 
+                            title="${stat} - Used by ${usersCount} character(s) with this set"
+                            ${isUnused ? 'disabled' : ''}>
+                        <img class="stat-icon" src="images/stat-icon/${slugify(stat)}.webp">
+                        <span class="stat-name">${stat}</span>
+                        <span class="stat-count">(${usersCount})</span>
+                    </button>`;
+        });
+        mainStatsFilterHtml += `</div></div>`;
+      }
+    });
+    if (!mainStatsFilterHtml) mainStatsFilterHtml = "<p>No configurable main stats for this set type.</p>";
+
+    let subStatsFilterHtml = '<div class="stat-options-grid">';
+    SUBSTATS_CANONICAL.forEach(substat => {
+      const usersCount = charactersUsingSet.filter(char => char.substatsClean.includes(substat)).length;
+      const isUnused = usersCount === 0;
+      const isActive = selectedSubStats.includes(substat);
+      subStatsFilterHtml += `
+            <button class="stat-option sub-stat-option ${isUnused ? 'unused-stat' : ''} ${isActive ? 'active' : ''}" 
+                    data-stat-type="sub" data-value="${substat}"
+                    title="${substat} - Prioritized by ${usersCount} character(s) with this set"
+                    ${isUnused ? 'disabled' : ''}>
+                <img class="stat-icon" src="images/stat-icon/${slugify(substat)}.webp">
+                <span class="stat-name">${substat}</span>
+                <span class="stat-count">(${usersCount})</span>
+            </button>`;
+    });
+    subStatsFilterHtml += '</div>';
 
     appContent.innerHTML = `
       <div class="page-container">
@@ -540,16 +600,174 @@
               </div>
           </div>
           ${setInfoHtml}
-          <div class="relic-info-section">
-              <h3>Main Stat Usage Analysis</h3>
-              <p>This shows which main stats are generally useful for characters who equip this set.</p>
-              ${mainStatHtml}
-          </div>
-          <div class="relic-info-section">
-              <h3>Substat Priority Analysis</h3>
-              ${substatSectionHtml}
+          <div class="relic-interactive-filter-area">
+              <h3>Stat Usage Analysis</h3>
+              <p>Select main stats and substats to find characters who benefit from this set with those stats. Stats marked with (0) are not used by any character with this set and are disabled.</p>
+              
+              <div class="filter-controls-panel">
+                  <div class="filter-section">
+                      <div class="filter-section-header">
+                          <h4>Main Stats</h4>
+                          <button class="collapse-toggle-btn" aria-expanded="true" aria-controls="main-stats-content">▼</button>
+                      </div>
+                      <div class="filter-section-content" id="main-stats-content">
+                          ${mainStatsFilterHtml}
+                      </div>
+                  </div>
+
+                  <div class="filter-section">
+                      <div class="filter-section-header">
+                          <h4>Substats</h4>
+                           <button class="collapse-toggle-btn" aria-expanded="true" aria-controls="sub-stats-content">▼</button>
+                      </div>
+                      <div class="filter-section-content" id="sub-stats-content">
+                          <div class="substats-logic-toggle">
+                              <label><input type="radio" name="substat-logic" value="OR" ${substatLogic === 'OR' ? 'checked' : ''}> OR</label>
+                              <label><input type="radio" name="substat-logic" value="AND" ${substatLogic === 'AND' ? 'checked' : ''}> AND</label>
+                          </div>
+                          ${subStatsFilterHtml}
+                      </div>
+                  </div>
+                  <button id="reset-filters-btn" class="filter-button">Reset Filters</button>
+              </div>
+
+              <div class="filtered-results-section">
+                  <h4 id="character-count-display"></h4>
+                  <div id="filtered-character-list-container" class="item-list-scroll-container character-list">
+                      ${/* Initial rendering will be handled by applyFiltersAndRenderResults */''}
+                  </div>
+                  <p id="no-filtered-results-message" style="display:none;">No characters match the selected criteria for this set.</p>
+              </div>
           </div>
       </div>`;
+
+    const characterListContainer = document.getElementById('filtered-character-list-container');
+    const characterCountDisplay = document.getElementById('character-count-display');
+    const noResultsMessage = document.getElementById('no-filtered-results-message');
+    const filterArea = appContent.querySelector('.relic-interactive-filter-area');
+
+    function updateCurrentFilterState() {
+      if (previousPageInfo.slug === setSlug) { // Ensure we are updating for the current page
+        previousPageInfo.filters = {
+          selectedMainStats,
+          selectedSubStats,
+          substatLogic
+        };
+      }
+    }
+
+    function applyFiltersAndRenderResults() {
+      let filteredCharacters = [...charactersUsingSet];
+
+      const activeMainStatPieces = Object.keys(selectedMainStats).filter(piece => selectedMainStats[piece].length > 0);
+      if (activeMainStatPieces.length > 0) {
+        filteredCharacters = filteredCharacters.filter(char => {
+          return activeMainStatPieces.every(pieceType => {
+            const charPieceStats = getCharacterPieceStats(char, pieceType);
+            if (!charPieceStats || charPieceStats.length === 0) return false;
+            return selectedMainStats[pieceType].some(selStat => charPieceStats.includes(selStat));
+          });
+        });
+      }
+
+      if (selectedSubStats.length > 0) {
+        filteredCharacters = filteredCharacters.filter(char => {
+          if (substatLogic === 'OR') {
+            return selectedSubStats.some(sub => char.substatsClean.includes(sub));
+          } else { // AND logic
+            return selectedSubStats.every(sub => char.substatsClean.includes(sub));
+          }
+        });
+      }
+
+      characterCountDisplay.textContent = `Showing ${filteredCharacters.length} of ${charactersUsingSet.length} character(s) for this set.`;
+
+      if (filteredCharacters.length > 0) {
+        characterListContainer.innerHTML = _renderItemsList(filteredCharacters.map(c => c.name), "character", "Matching Characters", "character-list-icon");
+        noResultsMessage.style.display = 'none';
+        characterListContainer.style.display = '';
+      } else {
+        characterListContainer.innerHTML = '';
+        noResultsMessage.style.display = 'block';
+        characterListContainer.style.display = 'none';
+      }
+      updateCurrentFilterState(); // Update state for persistence on navigation
+    }
+
+    filterArea.addEventListener('click', (event) => {
+      const statButton = event.target.closest('button.stat-option:not(:disabled)');
+      const filterHeader = event.target.closest('.filter-section-header'); // Check for header click
+      const collapseButtonFromHeader = filterHeader ? filterHeader.querySelector('.collapse-toggle-btn') : null;
+
+      if (statButton) {
+        statButton.classList.toggle('active');
+        const statType = statButton.dataset.statType;
+        const value = statButton.dataset.value;
+
+        if (statType === 'main') {
+          const piece = statButton.dataset.piece;
+          if (!selectedMainStats[piece]) selectedMainStats[piece] = []; // Ensure array exists
+          if (statButton.classList.contains('active')) {
+            if (!selectedMainStats[piece].includes(value)) {
+              selectedMainStats[piece].push(value);
+            }
+          } else {
+            selectedMainStats[piece] = selectedMainStats[piece].filter(s => s !== value);
+          }
+        } else if (statType === 'sub') {
+          if (statButton.classList.contains('active')) {
+            if (!selectedSubStats.includes(value)) {
+              selectedSubStats.push(value);
+            }
+          } else {
+            selectedSubStats = selectedSubStats.filter(s => s !== value);
+          }
+        }
+        applyFiltersAndRenderResults();
+      } else if (event.target.id === 'reset-filters-btn') { // Moved this check up for clarity
+        selectedMainStats = {
+          BODY: [],
+          FEET: [],
+          SPHERE: [],
+          ROPE: []
+        };
+        selectedSubStats = [];
+        substatLogic = 'OR';
+        filterArea.querySelectorAll('button.stat-option.active').forEach(btn => btn.classList.remove('active'));
+        const orRadio = filterArea.querySelector('input[name="substat-logic"][value="OR"]');
+        if (orRadio) orRadio.checked = true;
+
+        // Reset collapse states to expanded
+        filterArea.querySelectorAll('.collapse-toggle-btn').forEach(btn => {
+          const contentId = btn.getAttribute('aria-controls');
+          const contentElement = document.getElementById(contentId);
+          btn.setAttribute('aria-expanded', 'true');
+          if (contentElement) contentElement.style.display = '';
+          btn.textContent = '▼';
+        });
+
+        applyFiltersAndRenderResults();
+      } else if (collapseButtonFromHeader || event.target.closest('.collapse-toggle-btn')) { // Handles clicks on header or button itself
+        const actualCollapseButton = collapseButtonFromHeader || event.target.closest('.collapse-toggle-btn');
+        const contentId = actualCollapseButton.getAttribute('aria-controls');
+        const contentElement = document.getElementById(contentId);
+        const isExpanded = actualCollapseButton.getAttribute('aria-expanded') === 'true';
+
+        actualCollapseButton.setAttribute('aria-expanded', !isExpanded);
+        if (contentElement) contentElement.style.display = isExpanded ? 'none' : '';
+        actualCollapseButton.textContent = isExpanded ? '▶' : '▼';
+      }
+    });
+
+    filterArea.addEventListener('change', (event) => {
+      if (event.target.name === 'substat-logic') {
+        substatLogic = event.target.value;
+        applyFiltersAndRenderResults();
+      }
+    });
+
+    // Initial application of filters (especially if loaded from cache) & results rendering
+    applyFiltersAndRenderResults();
   }
 
   // --- Search Popup Logic ---
@@ -579,7 +797,10 @@
     removeSearchItemFocus();
     if (searchableListItems[index]) {
       searchableListItems[index].classList.add("focused-search-item");
-      searchableListItems[index].scrollIntoView({ block: "nearest", inline: "nearest" });
+      searchableListItems[index].scrollIntoView({
+        block: "nearest",
+        inline: "nearest"
+      });
       currentSearchFocusIndex = index;
     }
   }
@@ -669,6 +890,16 @@
 
   // --- Router ---
   function handleRouteChange() {
+    // Save filter state of the previous relic set page before navigating away
+    if (previousPageInfo.type === 'relicSet' && previousPageInfo.slug && previousPageInfo.filters) {
+      const cacheKey = `relicFilterState_${previousPageInfo.slug}`;
+      try {
+        sessionStorage.setItem(cacheKey, JSON.stringify(previousPageInfo.filters));
+      } catch (e) {
+        console.error("Error saving filters to sessionStorage:", e);
+      }
+    }
+
     const hash = location.hash;
     const loadingContainer = document.querySelector(".loading-container");
     if (loadingContainer) loadingContainer.style.display = "none";
@@ -707,7 +938,8 @@
       relicSetDetailsData = await relicInfoResponse.json();
 
       const relicIdLookup = new Map(relicSetDetailsData.map(item => [item.Name, item.ID]));
-      const tempRelicSets = new Set(), tempOrnamentSets = new Set();
+      const tempRelicSets = new Set(),
+        tempOrnamentSets = new Set();
 
       relicSetDetailsData.forEach((item) => {
         if (item.Name && typeof item.Name === "string") {
@@ -717,14 +949,14 @@
       });
       RELIC_SETS_DATA = Array.from(tempRelicSets).sort((a, b) => (relicIdLookup.get(b) || 0) - (relicIdLookup.get(a) || 0));
       ORNAMENT_SETS_DATA = Array.from(tempOrnamentSets).sort((a, b) => (relicIdLookup.get(b) || 0) - (relicIdLookup.get(a) || 0));
-      
+
       ALL_KNOWN_SETS_SORTED = [...RELIC_SETS_DATA, ...ORNAMENT_SETS_DATA].sort((a, b) => b.length - a.length);
 
       ALL_KNOWN_SETS_SORTED.forEach(set => {
-          ALL_KNOWN_SETS_SLUG_MAP.set(slugify(set), set);
-          ALL_KNOWN_SETS_NORMALIZED_MAP.set(set.toLowerCase().replace(/[^a-z0-9]/g, ""), set);
+        ALL_KNOWN_SETS_SLUG_MAP.set(slugify(set), set);
+        ALL_KNOWN_SETS_NORMALIZED_MAP.set(set.toLowerCase().replace(/[^a-z0-9]/g, ""), set);
       });
-      
+
       processData(rawBuildData);
 
       characterBuilds.sort((a, b) => {
@@ -733,8 +965,7 @@
       });
       allCharacters = characterBuilds.map((c) => c.name);
 
-      // Event delegation for character list toggles
-      appContent.addEventListener("click", function (event) {
+      appContent.addEventListener("click", function(event) {
         const toggleElement = event.target.closest(".char-count-toggle");
         if (toggleElement && !toggleElement.classList.contains("no-users")) {
           event.preventDefault();
@@ -747,14 +978,14 @@
         }
       });
 
-      // Search popup event listeners
       navSearchButton.addEventListener("click", openSearchPopup);
       searchPopup.addEventListener("click", (event) => {
         if (event.target === searchPopup) closeSearchPopup();
       });
       universalSearchInput.addEventListener("input", handleUniversalSearch);
       universalSearchInput.addEventListener("focus", () => {
-        currentSearchFocusIndex = -1; removeSearchItemFocus();
+        currentSearchFocusIndex = -1;
+        removeSearchItemFocus();
       });
       universalSearchClearBtn.addEventListener("click", () => {
         if (universalSearchInput.value) {
@@ -767,7 +998,6 @@
         }
       });
 
-      // Global keydown listeners
       document.addEventListener("keydown", (event) => {
         if (searchPopup.style.display === "flex") {
           if (event.key === "Escape") closeSearchPopup();
@@ -807,13 +1037,14 @@
             const activeElement = document.activeElement;
             const isTyping = activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.isContentEditable);
             if (!isTyping) {
-              event.preventDefault(); openSearchPopup();
+              event.preventDefault();
+              openSearchPopup();
             }
           }
         }
       });
 
-      handleRouteChange(); // Initial route handling
+      handleRouteChange();
     } catch (error) {
       console.error("Initialization failed:", error);
       document.title = `Error - ${siteTitle}`;
