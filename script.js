@@ -639,7 +639,7 @@
           ${setInfoHtml}
           <div class="relic-interactive-filter-area">
               <h3>Stat Usage Analysis</h3>
-              <p>Select main stats and substats to find characters who benefit from this set with those stats. Stats marked with (0) are not used by any character with this set.</p>
+              <p>Select main stats and substats to find characters who benefit from this set with those stats. Stats with 0 are not used by any character with this set.</p>
               
               <div class="filter-controls-panel">
                   <div class="filter-section">

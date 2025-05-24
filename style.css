@@ -716,7 +716,7 @@ footer {
 .substats-logic-toggle label {
   display: flex;
   align-items: center;
-  gap: 0.2em;
+  gap: 0.25rem;
   /* Small gap between radio and text */
   cursor: pointer;
 }
