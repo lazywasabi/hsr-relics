@@ -25,7 +25,7 @@
   /* Component Specific */
   --stat-button-bg: #383838;
   --stat-button-hover-bg: #4a4a4a;
-  --stat-button-active-bg: var(--accent-color);
+  --stat-button-active-bg: var(--green-color);
   --stat-button-active-text: #fff;
   --stat-button-unused-bg: #252525;
   --stat-button-unused-text: var(--secondary-text-color);
@@ -655,12 +655,13 @@ footer {
 }
 
 .stat-count {
-  margin-left: 2px;
+  margin-right: 2px;
   /* Keep small separation */
   font-size: 1em;
   color: var(--secondary-text-color);
   flex-shrink: 0;
   /* Prevent count from shrinking */
+  transition: color 0.2s;
 }
 
 .stat-option:hover:not(:disabled, .active) {
@@ -674,7 +675,7 @@ footer {
 }
 
 .stat-option.active .stat-count {
-  color: #ddd;
+  color: var(--stat-button-active-text);;
   /* Lighter count for active state */
 }
 
