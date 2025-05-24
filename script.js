@@ -603,7 +603,7 @@
                             ${isUnused ? 'disabled' : ''}>
                         <img class="stat-icon" src="images/stat-icon/${slugify(stat)}.webp" alt="${stat} icon">
                         <span class="stat-name">${stat}</span>
-                        <span class="stat-count">(${usersCount})</span>
+                        <span class="stat-count">${usersCount}</span>
                     </button>`;
         });
         mainStatsFilterHtml += `</div></div>`;
@@ -623,7 +623,7 @@
                     ${isUnused ? 'disabled' : ''}>
                 <img class="stat-icon" src="images/stat-icon/${slugify(substat)}.webp" alt="${substat} icon">
                 <span class="stat-name">${substat}</span>
-                <span class="stat-count">(${usersCount})</span>
+                <span class="stat-count">${usersCount}</span>
             </button>`;
     });
     subStatsFilterHtml += '</div>';
