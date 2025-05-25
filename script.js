@@ -812,7 +812,8 @@
   // --- Search Popup Logic ---
   function openSearchPopup() {
     searchPopup.style.display = "flex";
-    universalSearchInput.value = lastUniversalSearchQueryValue; // Restore previous query for this session
+    // universalSearchInput.value = lastUniversalSearchQueryValue; // Restore previous query for this session
+    universalSearchInput.value = ""; // Clear previous search query
     universalSearchInput.focus();
     document.body.style.overflow = "hidden"; // Prevent background scrolling
     handleUniversalSearch(); // Populate results if there was a previous query
@@ -1063,8 +1064,11 @@
           } else if (event.key === "ArrowUp" || (event.key === "Tab" && event.shiftKey)) {
             event.preventDefault();
             if (searchableListItems.length > 0) {
-              currentSearchFocusIndex = (currentSearchFocusIndex - 1 + searchableListItems.length) % searchableListItems.length;
-              if (currentSearchFocusIndex < 0) currentSearchFocusIndex = searchableListItems.length - 1; // Ensure positive index
+              if (currentSearchFocusIndex === -1) {
+                currentSearchFocusIndex = searchableListItems.length - 1;
+              } else {
+                currentSearchFocusIndex = (currentSearchFocusIndex - 1 + searchableListItems.length) % searchableListItems.length;
+              }
               addSearchItemFocus(currentSearchFocusIndex);
             }
           } else if (event.key === "Enter") {
