@@ -28,6 +28,7 @@
   // Precomputed maps for faster lookups, populated in initApp
   let ALL_KNOWN_SETS_SLUG_MAP = new Map(); // Map<slug, originalSetName>
   let ALL_KNOWN_SETS_NORMALIZED_MAP = new Map(); // Map<normalizedName, originalSetName> (lowercase, no special chars)
+  let RELIC_GROUP_MAP = new Map(); // Map<groupName, Set<setName>> --- NEW: For group aliases
 
   // --- Static Schemas & Aliases ---
   const MAIN_STATS_SCHEMA = {
@@ -138,28 +139,76 @@
   /**
    * Parses a string containing comma-separated set names or concatenated set names.
    * Uses a greedy matching approach based on ALL_KNOWN_SETS_SORTED (longest names first).
+   * Handles "Group:XXX" aliases by expanding them.
    */
   function parseSetListString(setString) {
     if (!setString || typeof setString !== "string") return [];
-    const foundSets = [];
+    const foundSets = new Set(); // Use a Set to automatically handle duplicates
     let remainingString = setString.trim();
+    const groupPrefix = "Group:";
 
     while (remainingString.length > 0) {
       let matched = false;
-      for (const setName of ALL_KNOWN_SETS_SORTED) {
-        if (remainingString.startsWith(setName)) {
-          foundSets.push(setName);
-          remainingString = remainingString.substring(setName.length).trim();
+
+      // Priority 1: Check for "Group:XXX" alias
+      if (remainingString.startsWith(groupPrefix)) {
+        let groupTokenEndIndex = remainingString.indexOf(',');
+        if (groupTokenEndIndex === -1) { // If no comma, it's the last token
+          groupTokenEndIndex = remainingString.length;
+        }
+        const groupToken = remainingString.substring(0, groupTokenEndIndex).trim(); // e.g., "Group:SPD6%"
+        const groupName = groupToken.substring(groupPrefix.length); // e.g., "SPD6%"
+
+        if (RELIC_GROUP_MAP.has(groupName)) {
+          RELIC_GROUP_MAP.get(groupName).forEach(setInGroup => foundSets.add(setInGroup));
+          remainingString = remainingString.substring(groupToken.length).trim();
           if (remainingString.startsWith(",")) {
             remainingString = remainingString.substring(1).trim();
           }
           matched = true;
-          break; // Found the longest possible match for this part of the string
+        } else {
+          // If group name not found in map, treat it as an unknown token and try to skip it
+          // This prevents infinite loops if a "Group:XXX" is malformed or not defined.
+          console.warn(`Unknown relic group: ${groupToken}`);
+          remainingString = remainingString.substring(groupToken.length).trim();
+           if (remainingString.startsWith(",")) {
+            remainingString = remainingString.substring(1).trim();
+          }
+          // We don't set matched = true here, because we didn't *successfully* match a group.
+          // The loop will continue, and if nothing else matches, it will break.
+          // Or, if there was a comma after the unknown group, it will proceed to parse the next item.
+          // If it was the *only* thing in remainingString, the outer loop condition will fail.
+          // This part handles cases like "Group:Unknown,SetA" -> skips "Group:Unknown", parses "SetA"
+          // And "Group:Unknown" alone -> loop terminates.
+          // Essentially, we consume the unknown group token and let the next iteration (or set matching) handle what's left.
         }
       }
-      if (!matched) break; // No known set name matches the start of the remaining string
+
+      // Priority 2: Check for actual set names if no group was matched or if group logic wants to proceed
+      if (!matched) {
+        for (const setName of ALL_KNOWN_SETS_SORTED) {
+          if (remainingString.startsWith(setName)) {
+            foundSets.add(setName); // Add to Set
+            remainingString = remainingString.substring(setName.length).trim();
+            if (remainingString.startsWith(",")) {
+              remainingString = remainingString.substring(1).trim();
+            }
+            matched = true;
+            break; // Found the longest possible match for this part of the string
+          }
+        }
+      }
+      if (!matched) {
+        // If neither a known group nor a known set name matches the start of the remaining string,
+        // and we didn't consume an unknown group token in this iteration, break to avoid infinite loop.
+        // This can happen if there's an unrecognized token that's not a "Group:XXX".
+        if (remainingString.length > 0 && !remainingString.startsWith(groupPrefix)) {
+             console.warn(`Unparseable relic string segment: ${remainingString.substring(0, Math.min(20, remainingString.length))}...`);
+        }
+        break;
+      }
     }
-    return foundSets;
+    return Array.from(foundSets); // Convert Set to Array
   }
 
   /**
@@ -982,15 +1031,26 @@
       const rawBuildData = await buildDataResponse.json();
       relicSetDetailsData = await relicInfoResponse.json(); // Store raw relic details
 
-      // Populate RELIC_SETS_DATA and ORNAMENT_SETS_DATA from relicSetDetailsData
+      // Populate RELIC_SETS_DATA, ORNAMENT_SETS_DATA, and RELIC_GROUP_MAP from relicSetDetailsData
       const relicIdLookup = new Map(relicSetDetailsData.map(item => [item.Name, item.ID]));
       const tempRelicSets = new Set(),
-        tempOrnamentSets = new Set();
+            tempOrnamentSets = new Set();
 
       relicSetDetailsData.forEach((item) => {
         if (item.Name && typeof item.Name === "string") {
           if (item.Type === "Relic Set") tempRelicSets.add(item.Name);
           else if (item.Type === "Planetary Ornament Set") tempOrnamentSets.add(item.Name);
+
+          // Populate RELIC_GROUP_MAP
+          if (item.Group && typeof item.Group === 'string') {
+            const groupNames = item.Group.split(',').map(g => g.trim()).filter(g => g); // Get individual group names
+            groupNames.forEach(groupName => {
+              if (!RELIC_GROUP_MAP.has(groupName)) {
+                RELIC_GROUP_MAP.set(groupName, new Set());
+              }
+              RELIC_GROUP_MAP.get(groupName).add(item.Name);
+            });
+          }
         }
       });
       // Sort by ID descending (newer sets first)
@@ -998,6 +1058,7 @@
       ORNAMENT_SETS_DATA = Array.from(tempOrnamentSets).sort((a, b) => (relicIdLookup.get(b) || 0) - (relicIdLookup.get(a) || 0));
 
       // Create a combined list of all set names, sorted by length for parsing
+      // This list should still only contain actual set names, not "Group:XXX"
       ALL_KNOWN_SETS_SORTED = [...RELIC_SETS_DATA, ...ORNAMENT_SETS_DATA].sort((a, b) => b.length - a.length);
 
       // Populate lookup maps for set names
