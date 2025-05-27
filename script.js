@@ -15,7 +15,7 @@
   const mainNav = document.getElementById("main-nav");
 
   // --- Static Data ---
-  const siteTitle = "Honkai: Star Rail Relic Helper";
+  const siteTitle = "Relic Salvaging Helper for Honkai: Star Rail";
 
   // --- Dynamic Data (populated during initialization) ---
   let RELIC_SETS_DATA = []; // Cavern Relics, sorted by ID desc
