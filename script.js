@@ -28,7 +28,7 @@
   // Precomputed maps for faster lookups, populated in initApp
   let ALL_KNOWN_SETS_SLUG_MAP = new Map(); // Map<slug, originalSetName>
   let ALL_KNOWN_SETS_NORMALIZED_MAP = new Map(); // Map<normalizedName, originalSetName> (lowercase, no special chars)
-  let RELIC_GROUP_MAP = new Map(); // Map<groupName, Set<setName>> --- NEW: For group aliases
+  let RELIC_GROUP_MAP = new Map(); // Map<groupName, Set<setName>>
 
   // --- Static Schemas & Aliases ---
   const MAIN_STATS_SCHEMA = {
