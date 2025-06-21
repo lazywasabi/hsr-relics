@@ -377,6 +377,7 @@
   }
 
   function renderHomePage() {
+    const homeNotice = document.querySelector("#homeNotice").content.cloneNode(true);
     document.title = siteTitle;
     appContent.innerHTML = `
       <div class="page-container home-page-layout">
@@ -399,6 +400,7 @@
               </div>
           </section>
       </div>`;
+    appContent.prepend(homeNotice);
     previousPageInfo = {
       type: 'home',
       slug: null,

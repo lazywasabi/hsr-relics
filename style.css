@@ -425,6 +425,14 @@ footer {
   gap: 2rem;
 }
 
+.page-container.home-page-notice {
+  margin-bottom: 1rem;
+}
+
+.page-container.home-page-notice.hide {
+  display: none;
+}
+
 /* --- Character & Relic Detail Pages --- */
 .build-section {
   margin-bottom: 2rem;
