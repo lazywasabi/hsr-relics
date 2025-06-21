@@ -365,7 +365,7 @@
         return `
             <li>
                 <a href="${href}" title="${name}">
-                    <img src="${imgSrc}" alt="" class="item-icon ${itemClass}" loading="lazy">
+                    <img src="${imgSrc}" alt="" class="item-icon ${itemClass}">
                     <span>${name}</span>
                 </a>
             </li>`;
@@ -479,7 +479,7 @@
         return `
             <span class="set-name-link">
                 <a href="${href}">
-                    <img src="images/relic/${slug}.webp" alt="" class="item-icon inline-icon" loading="lazy">
+                    <img src="images/relic/${slug}.webp" alt="" class="item-icon inline-icon">
                     <span class="set-name-text">${s}</span>
                 </a>
             </span>`;
@@ -500,7 +500,7 @@
       <div class="page-container">
           <div class="page-header">
               <div class="page-title-with-icon">
-                  <img src="images/character-sticker/${slugify(character.name)}.webp" alt="${character.name}" class="page-main-icon" loading="lazy">
+                  <img src="images/character-sticker/${slugify(character.name)}.webp" alt="${character.name}" class="page-main-icon">
                   <h2>${character.name}</h2>
               </div>
           </div>
@@ -690,7 +690,7 @@
       <div class="page-container">
           <div class="page-header">
                <div class="page-title-with-icon">
-                  <img src="images/relic/${slugify(setName)}.webp" alt="${setName}" class="page-main-icon" loading="lazy">
+                  <img src="images/relic/${slugify(setName)}.webp" alt="${setName}" class="page-main-icon">
                   <h2>${setName}</h2>
               </div>
           </div>
@@ -926,7 +926,7 @@
       html += '<h3>Cavern Relics</h3><ul class="search-results-list">';
       matchingRelics.forEach((name) => {
         const slug = slugify(name);
-        html += `<li><a href="#/relics/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
+        html += `<li><a href="#/relics/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon">${name}</a></li>`;
       });
       html += "</ul>";
     }
@@ -938,7 +938,7 @@
       html += '<h3>Planar Ornaments</h3><ul class="search-results-list">';
       matchingOrnaments.forEach((name) => {
         const slug = slugify(name);
-        html += `<li><a href="#/ornaments/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
+        html += `<li><a href="#/ornaments/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon">${name}</a></li>`;
       });
       html += "</ul>";
     }
@@ -950,7 +950,7 @@
       html += '<h3>Characters</h3><ul class="search-results-list">';
       matchingCharacters.forEach((name) => {
         const slug = slugify(name);
-        html += `<li><a href="#/characters/${slug}"><img src="images/character/${slug}.webp" alt="" class="item-icon search-result-icon" loading="lazy">${name}</a></li>`;
+        html += `<li><a href="#/characters/${slug}"><img src="images/character/${slug}.webp" alt="" class="item-icon search-result-icon">${name}</a></li>`;
       });
       html += "</ul>";
     }
