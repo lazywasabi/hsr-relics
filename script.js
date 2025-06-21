@@ -335,10 +335,17 @@
   /**
    * Generic helper to render a list of items (characters, relics, ornaments).
    */
-  function _renderItemsList(items, itemType, listTitle, itemClass = "") {
+  function _renderItemsList(items, itemType, listTitle, itemClass = "", limit = 0) {
     let listHtml = "";
-    if (items.length > 0) {
-      listHtml = items.map((name) => {
+    let itemsToRender = items;
+
+    // Apply limit if specified
+    if (limit > 0) {
+      itemsToRender = items.slice(0, limit);
+    }
+
+    if (itemsToRender.length > 0) {
+      listHtml = itemsToRender.map((name) => {
         const slug = slugify(name);
         let href = "",
           imgSrc = "";
