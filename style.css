@@ -422,7 +422,71 @@ footer {
 .home-page-layout {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 4rem;
+}
+
+.home-page-layout .home-section {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row-reverse;
+  gap: 0rem;
+}
+
+.home-page-layout .page-header {
+  display: block;
+  flex-basis: 25%;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.home-page-layout .page-header a {
+  display: block;
+  padding-left: 2.25rem;
+}
+
+.home-page-layout .page-header a h2 {
+  font-size: 1.6rem;
+  transition: color 0.2s ease;
+}
+
+.home-page-layout .page-header a:hover {
+  text-decoration: none;
+}
+
+.home-page-layout .page-header a:hover h2 {
+  text-decoration: none;
+  color: var(--primary-text-color);
+}
+
+.home-page-layout .page-header img {
+  width: 6rem;
+}
+
+.home-page-layout .item-list-scroll-container {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.home-page-layout .item-list-scroll-container:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(90deg,rgba(0, 0, 0, 0) 88%, rgba(44, 44, 44, 1) 100%);
+  pointer-events: none;
+}
+
+.home-page-layout .home-section .content-list.item-grid-list {
+  display: flex;
+}
+
+.home-page-layout .home-section .content-list.item-grid-list li a {
+  width: 8.25rem;
 }
 
 .page-container.home-page-notice {
@@ -845,6 +909,20 @@ footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .home-page-layout .page-header {
+    width: 100%;
+    flex: auto;
+    text-align: center;
+  }
+
+  .home-page-layout .page-header a {
+    padding-left: 0;
+  }
+
+  .home-page-layout .item-list-scroll-container {
+    display: none;
   }
 
   .build-grid,

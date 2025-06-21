@@ -382,21 +382,21 @@
     appContent.innerHTML = `
       <div class="page-container home-page-layout">
           <section class="home-section">
-              <div class="page-header"><h2>Cavern Relics</h2></div>
-              <div class="item-list-scroll-container">
-                  ${_renderItemsList(RELIC_SETS_DATA, "cavern-relic", "Cavern Relics", "relic-list-icon")}
-              </div>
-          </section>
-          <section class="home-section">
-              <div class="page-header"><h2>Planar Ornaments</h2></div>
-              <div class="item-list-scroll-container">
-                  ${_renderItemsList(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "relic-list-icon")}
-              </div>
-          </section>
-          <section class="home-section">
-              <div class="page-header"><h2>Characters</h2></div>
+              <div class="page-header"><a href="/#/relics"><img src="/images/icon/relic.svg"><h2>Cavern Relics</h2></a></div>
               <div class="item-list-scroll-container character-list">
-                  ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon")}
+                  ${_renderItemsList(RELIC_SETS_DATA, "cavern-relic", "Cavern Relics", "character-list-icon", 6)}
+              </div>
+          </section>
+          <section class="home-section">
+              <div class="page-header"><a href="/#/ornaments"><img src="/images/icon/ornaments.svg"><h2>Planar Ornaments</h2></a></div>
+              <div class="item-list-scroll-container character-list">
+                  ${_renderItemsList(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "character-list-icon", 6)}
+              </div>
+          </section>
+          <section class="home-section">
+              <div class="page-header"><a href="/#/characters"><img src="/images/icon/character.svg"><h2>Characters</h2></a></div>
+              <div class="item-list-scroll-container character-list">
+                  ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon", 6)}
               </div>
           </section>
       </div>`;
