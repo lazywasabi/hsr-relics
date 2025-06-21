@@ -911,6 +911,10 @@ footer {
     gap: 0.5rem;
   }
 
+  .home-page-layout {
+    gap: 2.5rem;
+  }
+
   .home-page-layout .page-header {
     width: 100%;
     flex: auto;
@@ -919,6 +923,10 @@ footer {
 
   .home-page-layout .page-header a {
     padding-left: 0;
+  }
+
+  .home-page-layout .page-header img {
+    width: 4rem;
   }
 
   .home-page-layout .item-list-scroll-container {
