@@ -429,7 +429,6 @@ footer {
   display: flex;
   align-items: flex-end;
   flex-direction: row-reverse;
-  gap: 0rem;
 }
 
 .home-page-layout .page-header {
@@ -448,6 +447,7 @@ footer {
 .home-page-layout .page-header a h2 {
   margin: 0;
   font-size: 1.6rem;
+  line-height: 1.25;
   transition: color 0.2s ease;
 }
 
