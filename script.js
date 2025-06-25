@@ -224,7 +224,7 @@
     const originalComment = substatStr; // Preserve the original string for display
     // Remove content within parentheses or brackets (e.g., notes, conditions) before parsing
     let tempStr = substatStr.replace(/\([^)]*\)|\[[^\]]*\]/g, "").trim();
-    const parts = tempStr.split(/[>≥=/]+/); // Split by common priority delimiters
+    const parts = tempStr.split(/[>≥=/,]+/); // Split by common priority delimiters
     const cleanSubstats = [];
     const seenSubstats = new Set(); // To avoid duplicates
 
