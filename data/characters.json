@@ -982,11 +982,11 @@
   {
     "Name": "Phainon",
     "Body": "CRIT Rate, CRIT DMG",
-    "Feet": "ATK%",
+    "Feet": "Speed, ATK%",
     "Relic1": "Wavestrider Captain",
     "Relic2": "Scholar Lost in Erudition",
-    "Relic3": "",
-    "Relic4": "",
+    "Relic3": "Champion of Streetwise Boxing",
+    "Relic4": "Wavestrider Captain, Scholar Lost in Erudition, Champion of Streetwise Boxing Group:ATK12%",
     "Relic5": "",
     "Planar Sphere": "Physical DMG, ATK%",
     "Link Rope": "ATK%",
@@ -995,7 +995,7 @@
     "Planetary3": "",
     "Planetary4": "",
     "Planetary5": "",
-    "Substats": "CRIT Rate, CRIT DMG, ATK%",
+    "Substats": "SPD (if needed) > CRIT RATE > CRIT DMG > ATK%",
     "ID": 1408,
     "Release": 341
   },
