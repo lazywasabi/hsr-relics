@@ -346,7 +346,6 @@
 
   function renderCharactersListPage() {
     document.title = `Characters - ${SITE_TITLE}`;
-    Object.values(characterListFilters).forEach(set => set.clear());
     
     appContent.innerHTML = `
       <div class="page-container">
