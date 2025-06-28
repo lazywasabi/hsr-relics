@@ -23,7 +23,7 @@
   let ALL_KNOWN_SETS_SORTED = []; // All set names, sorted by string length desc (for parsing efficiency)
   let relicSetDetailsData = []; // Raw relic info from relics.json
   let characterBuilds = []; // Processed character build data, sorted
-  let allCharacters = []; // Character names, derived from sorted characterBuilds
+  // REMOVED: let allCharacters = []; // Replaced by using characterBuilds directly
 
   // Precomputed maps for faster lookups, populated in initApp
   let ALL_KNOWN_SETS_SLUG_MAP = new Map(); // Map<slug, originalSetName>
@@ -71,7 +71,14 @@
     "crit dmg": "CRIT DMG",
     "break effect%": "Break Effect",
   };
-
+  
+  // --- NEW: Character Filter Configuration ---
+  const CHARACTER_FILTER_CONFIG = {
+    rank: { label: "Rank", options: ["5", "4"] },
+    element: { label: "Element", options: ["Physical", "Fire", "Ice", "Lightning", "Wind", "Quantum", "Imaginary"] },
+    path: { label: "Path", options: ["Abundance", "Destruction", "Erudition", "Harmony", "Hunt", "Nihility", "Preservation", "Remembrance"] }
+  };
+  
   // --- Search State ---
   let searchableListItems = [];
   let currentSearchFocusIndex = -1;
@@ -81,7 +88,14 @@
   let previousPageInfo = {
     type: null, // e.g., 'relicSet', 'characterPage', 'home'
     slug: null, // e.g., 'genius-of-brilliant-stars'
-    filters: null // { selectedMainStats, selectedSubStats, substatLogic } for relicSet pages
+    filters: null // { selectedMainStats, selectedSubStats, requiredSubstatCount } for relicSet pages
+  };
+  
+  // --- NEW: Global Character Filter State ---
+  let characterListFilters = {
+    rank: new Set(),
+    element: new Set(),
+    path: new Set()
   };
 
   // --- Utility Functions ---
@@ -301,8 +315,13 @@
       const allRelicSets = aggregateAllSets(item, "Relic");
       const allPlanetarySets = aggregateAllSets(item, "Planetary");
 
+      // --- MODIFIED: Added Display Name and character properties ---
       return {
         name: item.Name,
+        displayName: item["Display Name"] || item.Name,
+        rank: item.Rank,
+        element: item.Element,
+        path: item.Path,
         ID: item.ID,
         Release: item.Release,
         body: item.Body ? item.Body.split(",").map((s) => s.trim()) : [],
@@ -334,6 +353,7 @@
 
   /**
    * Generic helper to render a list of items (characters, relics, ornaments).
+   * --- MODIFIED: Now handles character objects and adds filter classes. ---
    */
   function _renderItemsList(items, itemType, listTitle, itemClass = "", limit = 0) {
     let listHtml = "";
@@ -345,25 +365,26 @@
     }
 
     if (itemsToRender.length > 0) {
-      listHtml = itemsToRender.map((name) => {
-        const slug = slugify(name);
-        let href = "",
-          imgSrc = "";
+      listHtml = itemsToRender.map((item) => {
+        let name, slug, href, imgSrc, extraClasses = "";
 
         // Determine href and image source based on item type
-        if (itemType === "cavern-relic") {
-          href = `#/relics/${slug}`;
+        if (itemType === "cavern-relic" || itemType === "planar-ornament") {
+          name = item; // item is a string
+          slug = slugify(name);
+          href = itemType === "cavern-relic" ? `#/relics/${slug}` : `#/ornaments/${slug}`;
           imgSrc = `images/relic/${slug}.webp`;
-        } else if (itemType === "planar-ornament") {
-          href = `#/ornaments/${slug}`;
-          imgSrc = `images/relic/${slug}.webp`; // Ornaments use relic image path
         } else if (itemType === "character") {
+          name = item.displayName; // item is an object
+          slug = slugify(item.name); // slug is based on original name for consistency
           href = `#/characters/${slug}`;
           imgSrc = `images/character/${slug}.webp`;
+          // Add filterable classes
+          extraClasses = `character-${slug} character-rank-${item.rank} character-element-${slugify(item.element)} character-path-${slugify(item.path)}`;
         }
 
         return `
-            <li>
+            <li class="${extraClasses}">
                 <a href="${href}" title="${name}">
                     <img src="${imgSrc}" alt="" class="item-icon ${itemClass}">
                     <span>${name}</span>
@@ -396,7 +417,7 @@
           <section class="home-section">
               <div class="page-header"><a href="/#/characters"><img src="/images/icon/character.svg"><h2>Characters</h2></a></div>
               <div class="item-list-scroll-container character-list">
-                  ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon", 8)}
+                  ${_renderItemsList(characterBuilds, "character", "Characters", "character-list-icon", 8)}
               </div>
           </section>
       </div>`;
@@ -439,21 +460,106 @@
       filters: null
     };
   }
+  
+  // --- NEW: Helper to render the character filter bar ---
+  function _renderCharacterFilterBar(containerId = 'character-filter-bar') {
+    let filterHtml = `<div id="${containerId}" class="character-filter-bar">`;
 
+    for (const [type, config] of Object.entries(CHARACTER_FILTER_CONFIG)) {
+        filterHtml += `<div class="filter-group" data-filter-type="${type}">`;
+        config.options.forEach(value => {
+            const isActive = characterListFilters[type].has(value);
+            // Using a placeholder icon as requested
+            const iconSlug = type === 'rank' ? `rank-${value}` : slugify(value);
+            filterHtml += `
+                <button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${value}">
+                    <img src="images/icon/filter/${iconSlug}.webp" alt="${value}">
+                </button>`;
+        });
+        filterHtml += `</div>`;
+    }
+
+    filterHtml += `<button class="filter-reset-btn">Reset</button></div>`;
+    return filterHtml;
+  }
+  
+  // --- NEW: Helper to apply character filters ---
+  function applyCharacterFilters(characters) {
+    const isAnyFilterActive = Object.values(characterListFilters).some(s => s.size > 0);
+    if (!isAnyFilterActive) {
+        return characters;
+    }
+
+    return characters.filter(char => {
+        const rankMatch = characterListFilters.rank.size === 0 || characterListFilters.rank.has(char.rank);
+        const elementMatch = characterListFilters.element.size === 0 || characterListFilters.element.has(char.element);
+        const pathMatch = characterListFilters.path.size === 0 || characterListFilters.path.has(char.path);
+        return rankMatch && elementMatch && pathMatch;
+    });
+  }
+
+  // --- MODIFIED: Renders the full character list page with filters ---
   function renderCharactersListPage() {
     document.title = `Characters - ${siteTitle}`;
+    
+    // Reset filters when navigating to this page
+    Object.keys(characterListFilters).forEach(key => characterListFilters[key].clear());
+    
     appContent.innerHTML = `
       <div class="page-container">
           <div class="page-header"><h2>Characters</h2></div>
-          <div class="item-list-scroll-container full-page-list character-list">
-              ${_renderItemsList(allCharacters, "character", "Characters", "character-list-icon")}
+          <div id="character-list-controls">
+            ${_renderCharacterFilterBar('main-character-filter-bar')}
           </div>
+          <div id="character-list-container" class="item-list-scroll-container full-page-list character-list">
+              ${/* Content will be rendered by JS */''}
+          </div>
+          <p id="no-filtered-characters-message" style="display:none;">No characters match the selected filters.</p>
       </div>`;
-    previousPageInfo = {
-      type: 'characterList',
-      slug: null,
-      filters: null
-    };
+
+    const listContainer = document.getElementById('character-list-container');
+    const noResultsMessage = document.getElementById('no-filtered-characters-message');
+    const filterBar = document.getElementById('main-character-filter-bar');
+
+    function renderFilteredList() {
+        const filteredCharacters = applyCharacterFilters(characterBuilds);
+        
+        if (filteredCharacters.length > 0) {
+            listContainer.innerHTML = _renderItemsList(filteredCharacters, "character", "Characters", "character-list-icon");
+            listContainer.style.display = '';
+            noResultsMessage.style.display = 'none';
+        } else {
+            listContainer.innerHTML = '';
+            listContainer.style.display = 'none';
+            noResultsMessage.style.display = 'block';
+        }
+    }
+    
+    filterBar.addEventListener('click', (event) => {
+        const filterBtn = event.target.closest('.filter-option');
+        const resetBtn = event.target.closest('.filter-reset-btn');
+
+        if (filterBtn) {
+            const type = filterBtn.parentElement.dataset.filterType;
+            const value = filterBtn.dataset.filterValue;
+
+            if (characterListFilters[type].has(value)) {
+                characterListFilters[type].delete(value);
+                filterBtn.classList.remove('active');
+            } else {
+                characterListFilters[type].add(value);
+                filterBtn.classList.add('active');
+            }
+            renderFilteredList();
+        } else if (resetBtn) {
+            Object.keys(characterListFilters).forEach(key => characterListFilters[key].clear());
+            filterBar.querySelectorAll('.filter-option.active').forEach(btn => btn.classList.remove('active'));
+            renderFilteredList();
+        }
+    });
+
+    renderFilteredList(); // Initial render
+    previousPageInfo = { type: 'characterList', slug: null, filters: null };
   }
 
   function renderCharacterPage(characterName) {
@@ -468,7 +574,8 @@
       };
       return;
     }
-    document.title = `${character.name} - ${siteTitle}`;
+    // --- MODIFIED: Use displayName for UI ---
+    document.title = `${character.displayName} - ${siteTitle}`;
 
     const formatSetList = (sets) => {
       if (!sets || sets.length === 0) return "N/A";
@@ -500,8 +607,8 @@
       <div class="page-container">
           <div class="page-header">
               <div class="page-title-with-icon">
-                  <img src="images/character-sticker/${slugify(character.name)}.webp" alt="${character.name}" class="page-main-icon">
-                  <h2>${character.name}</h2>
+                  <img src="images/character-sticker/${slugify(character.name)}.webp" alt="${character.displayName}" class="page-main-icon">
+                  <h2>${character.displayName}</h2>
               </div>
           </div>
           <div class="build-section">
@@ -606,7 +713,8 @@
       ROPE: []
     };
     let selectedSubStats = [];
-    let substatLogic = 'OR'; // Default logic for substats
+    // --- MODIFIED: Replaced substatLogic with requiredSubstatCount ---
+    let requiredSubstatCount = 1;
 
     // Load filters from sessionStorage if available (e.g., after back navigation)
     const cacheKey = `relicFilterState_${setSlug}`;
@@ -616,7 +724,7 @@
         const cachedFilters = JSON.parse(cachedFiltersJson);
         selectedMainStats = cachedFilters.selectedMainStats || selectedMainStats;
         selectedSubStats = cachedFilters.selectedSubStats || selectedSubStats;
-        substatLogic = cachedFilters.substatLogic || substatLogic;
+        requiredSubstatCount = cachedFilters.requiredSubstatCount || requiredSubstatCount;
       } catch (e) {
         console.error("Error parsing cached filters:", e);
         // sessionStorage.removeItem(cacheKey); // Corrupted data could be cleared
@@ -632,7 +740,7 @@
       filters: {
         selectedMainStats,
         selectedSubStats,
-        substatLogic
+        requiredSubstatCount
       }
     };
 
@@ -716,9 +824,15 @@
                            <button class="collapse-toggle-btn" aria-expanded="true" aria-controls="sub-stats-content">▼</button>
                       </div>
                       <div class="filter-section-content" id="sub-stats-content">
+                          <!-- MODIFIED: Replaced radio buttons with stepper -->
                           <div class="substats-logic-toggle">
-                              <label><input type="radio" name="substat-logic" value="OR" ${substatLogic === 'OR' ? 'checked' : ''}> Match any</label>
-                              <label><input type="radio" name="substat-logic" value="AND" ${substatLogic === 'AND' ? 'checked' : ''}> Match all</label>
+                              <span>Match at least</span>
+                              <div class="substat-count-selector">
+                                  <button class="stepper-btn" data-step="-1" disabled>-</button>
+                                  <span class="stepper-value">1</span>
+                                  <button class="stepper-btn" data-step="1">+</button>
+                              </div>
+                              <span>of the selected substats</span>
                           </div>
                           ${subStatsFilterHtml}
                       </div>
@@ -727,7 +841,14 @@
               </div>
 
               <div class="filtered-results-section">
-                  <h4 id="character-count-display"></h4>
+                  <div class="filtered-results-header">
+                    <h4 id="character-count-display"></h4>
+                    <button id="character-filter-toggle" class="link-button">Filter Characters ▼</button>
+                  </div>
+                  <!-- NEW: Container for character filters -->
+                  <div id="relic-page-character-filter-container" style="display: none;">
+                    ${_renderCharacterFilterBar('relic-page-character-filter-bar')}
+                  </div>
                   <div id="filtered-character-list-container" class="item-list-scroll-container character-list">
                       ${/* Initial rendering will be handled by applyFiltersAndRenderResults */''}
                   </div>
@@ -740,6 +861,7 @@
     const characterCountDisplay = document.getElementById('character-count-display');
     const noResultsMessage = document.getElementById('no-filtered-results-message');
     const filterArea = appContent.querySelector('.relic-interactive-filter-area');
+    const substatStepper = filterArea.querySelector('.substat-count-selector');
 
     function updateCurrentFilterStateForPersistence() {
       // Ensure filters are saved for the current page context
@@ -747,9 +869,27 @@
         previousPageInfo.filters = {
           selectedMainStats,
           selectedSubStats,
-          substatLogic
+          requiredSubstatCount
         };
       }
+    }
+    
+    function updateStepperState() {
+        if (!substatStepper) return;
+        const valueSpan = substatStepper.querySelector('.stepper-value');
+        const minusBtn = substatStepper.querySelector('[data-step="-1"]');
+        const plusBtn = substatStepper.querySelector('[data-step="1"]');
+        
+        const min = 1;
+        const max = Math.max(1, Math.min(4, selectedSubStats.length));
+        
+        if (requiredSubstatCount > max) {
+            requiredSubstatCount = max;
+        }
+
+        valueSpan.textContent = requiredSubstatCount;
+        minusBtn.disabled = requiredSubstatCount <= min;
+        plusBtn.disabled = requiredSubstatCount >= max;
     }
 
     function applyFiltersAndRenderResults() {
@@ -768,21 +908,21 @@
         });
       }
 
-      // Filter by selected Substats
+      // --- MODIFIED: Filter by selected Substats using the stepper value ---
       if (selectedSubStats.length > 0) {
         filteredCharacters = filteredCharacters.filter(char => {
-          if (substatLogic === 'OR') {
-            return selectedSubStats.some(sub => char.substatsClean.includes(sub));
-          } else { // AND logic
-            return selectedSubStats.every(sub => char.substatsClean.includes(sub));
-          }
+            const matchCount = selectedSubStats.filter(sub => char.substatsClean.includes(sub)).length;
+            return matchCount >= requiredSubstatCount;
         });
       }
+      
+      // --- NEW: Apply global character filters ---
+      const finalFilteredCharacters = applyCharacterFilters(filteredCharacters);
 
-      characterCountDisplay.textContent = `Showing ${filteredCharacters.length} of ${charactersUsingSet.length} character(s) for this set`;
+      characterCountDisplay.textContent = `Showing ${finalFilteredCharacters.length} of ${charactersUsingSet.length} character(s) for this set`;
 
-      if (filteredCharacters.length > 0) {
-        characterListContainer.innerHTML = _renderItemsList(filteredCharacters.map(c => c.name), "character", "Matching Characters", "character-list-icon");
+      if (finalFilteredCharacters.length > 0) {
+        characterListContainer.innerHTML = _renderItemsList(finalFilteredCharacters, "character", "Matching Characters", "character-list-icon");
         noResultsMessage.style.display = 'none';
         characterListContainer.style.display = '';
       } else {
@@ -799,6 +939,11 @@
       const resetBtn = event.target.closest('#reset-filters-btn');
       const filterHeader = event.target.closest('.filter-section-header');
       const collapseToggleBtn = filterHeader ? filterHeader.querySelector('.collapse-toggle-btn') : event.target.closest('.collapse-toggle-btn');
+      const stepperBtn = event.target.closest('.stepper-btn:not(:disabled)');
+      const charFilterToggleBtn = event.target.closest('#character-filter-toggle');
+      const charFilterBar = document.getElementById('relic-page-character-filter-bar');
+      const charFilterBtn = charFilterBar ? event.target.closest('.filter-option') : null;
+      const charFilterResetBtn = charFilterBar ? event.target.closest('.filter-reset-btn') : null;
 
       if (statButton) {
         statButton.classList.toggle('active');
@@ -820,28 +965,23 @@
           } else {
             selectedSubStats = selectedSubStats.filter(s => s !== value);
           }
+          updateStepperState(); // Update stepper state when substat selection changes
         }
         applyFiltersAndRenderResults();
       } else if (resetBtn) {
-        selectedMainStats = {
-          BODY: [],
-          FEET: [],
-          SPHERE: [],
-          ROPE: []
-        };
+        selectedMainStats = { BODY: [], FEET: [], SPHERE: [], ROPE: [] };
         selectedSubStats = [];
-        substatLogic = 'OR'; // Reset to default
+        requiredSubstatCount = 1;
         filterArea.querySelectorAll('button.stat-option.active').forEach(btn => btn.classList.remove('active'));
-        const orRadio = filterArea.querySelector('input[name="substat-logic"][value="OR"]');
-        if (orRadio) orRadio.checked = true;
+        updateStepperState();
 
         // Reset collapse states to expanded
         filterArea.querySelectorAll('.collapse-toggle-btn').forEach(btn => {
           const contentId = btn.getAttribute('aria-controls');
           const contentElement = document.getElementById(contentId);
           btn.setAttribute('aria-expanded', 'true');
-          if (contentElement) contentElement.style.display = ''; // Show content
-          btn.textContent = '▼'; // Set to expanded icon
+          if (contentElement) contentElement.style.display = '';
+          btn.textContent = '▼';
         });
 
         applyFiltersAndRenderResults();
@@ -853,17 +993,36 @@
         collapseToggleBtn.setAttribute('aria-expanded', String(!isExpanded));
         if (contentElement) contentElement.style.display = isExpanded ? 'none' : '';
         collapseToggleBtn.textContent = isExpanded ? '▶' : '▼'; // Toggle icon
-      }
-    });
-
-    filterArea.addEventListener('change', (event) => {
-      if (event.target.name === 'substat-logic') {
-        substatLogic = event.target.value;
+      } else if (stepperBtn) {
+        const step = parseInt(stepperBtn.dataset.step, 10);
+        requiredSubstatCount += step;
+        updateStepperState();
         applyFiltersAndRenderResults();
+      } else if (charFilterToggleBtn) {
+          const container = document.getElementById('relic-page-character-filter-container');
+          const isHidden = container.style.display === 'none';
+          container.style.display = isHidden ? 'block' : 'none';
+          charFilterToggleBtn.textContent = isHidden ? 'Filter Characters ▲' : 'Filter Characters ▼';
+      } else if (charFilterBtn) {
+          const type = charFilterBtn.parentElement.dataset.filterType;
+          const value = charFilterBtn.dataset.filterValue;
+          if (characterListFilters[type].has(value)) {
+              characterListFilters[type].delete(value);
+              charFilterBtn.classList.remove('active');
+          } else {
+              characterListFilters[type].add(value);
+              charFilterBtn.classList.add('active');
+          }
+          applyFiltersAndRenderResults();
+      } else if (charFilterResetBtn) {
+          Object.keys(characterListFilters).forEach(key => characterListFilters[key].clear());
+          charFilterBar.querySelectorAll('.filter-option.active').forEach(btn => btn.classList.remove('active'));
+          applyFiltersAndRenderResults();
       }
     });
 
-    // Initial application of filters (especially if loaded from cache) & results rendering
+    // Initial application of filters & results rendering
+    updateStepperState();
     applyFiltersAndRenderResults();
   }
 
@@ -903,7 +1062,8 @@
       currentSearchFocusIndex = index;
     }
   }
-
+  
+  // --- MODIFIED: Search now uses character objects and searches displayName ---
   function handleUniversalSearch() {
     const currentInputValue = universalSearchInput.value;
     lastUniversalSearchQueryValue = currentInputValue; // Remember for session
@@ -943,14 +1103,14 @@
       html += "</ul>";
     }
 
-    const matchingCharacters = [...allCharacters] // Use spread to ensure it's a new array if allCharacters could be modified elsewhere
-      .filter((name) => name.toLowerCase().includes(query))
-      .sort((a, b) => a.localeCompare(b));
+    const matchingCharacters = characterBuilds
+      .filter((c) => c.name.toLowerCase().includes(query) || c.displayName.toLowerCase().includes(query))
+      .sort((a, b) => a.displayName.localeCompare(b.displayName));
     if (matchingCharacters.length > 0) {
       html += '<h3>Characters</h3><ul class="search-results-list">';
-      matchingCharacters.forEach((name) => {
-        const slug = slugify(name);
-        html += `<li><a href="#/characters/${slug}"><img src="images/character/${slug}.webp" alt="" class="item-icon search-result-icon">${name}</a></li>`;
+      matchingCharacters.forEach((char) => {
+        const slug = slugify(char.name);
+        html += `<li><a href="#/characters/${slug}"><img src="images/character/${slug}.webp" alt="" class="item-icon search-result-icon">${char.displayName}</a></li>`;
       });
       html += "</ul>";
     }
@@ -1011,8 +1171,9 @@
     else if (hash === "#/characters") renderCharactersListPage();
     else if (hash.startsWith("#/characters/")) {
       const charSlug = hash.substring("#/characters/".length);
-      // Find character name by slug, or fallback to deslugify (less reliable but a guess)
-      const charName = allCharacters.find(name => slugify(name) === charSlug) || findOriginalSetName(charSlug);
+      // Find character name by slug (which is based on the original `name` field)
+      const character = characterBuilds.find(c => slugify(c.name) === charSlug);
+      const charName = character ? character.name : deslugify(charSlug);
       renderCharacterPage(charName);
     } else if (hash.startsWith("#/ornaments/")) {
       const ornamentSlug = hash.substring("#/ornaments/".length);
@@ -1083,7 +1244,7 @@
         if (b.Release !== a.Release) return (b.Release || 0) - (a.Release || 0);
         return (a.ID || 0) - (b.ID || 0);
       });
-      allCharacters = characterBuilds.map((c) => c.name); // Extract character names
+      // REMOVED: allCharacters = characterBuilds.map((c) => c.name);
 
       // General click listener for delegated events (if any such elements exist)
       // Note: .char-count-toggle is not used in current rendering functions but kept for compatibility
