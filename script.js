@@ -325,7 +325,7 @@
             const isActive = characterListFilters[type].has(value);
             const iconSlug = type === 'rank' ? `rank-${value}` : slugify(value);
             const title = type === 'rank' ? `${value} Stars` : value;
-            filterHtml += `<button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${title}"><img src="/images/icon/filter/${iconSlug}.webp" alt="${value}"></button>`;
+            filterHtml += `<button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${title}"><img src="/images/game-icon/${iconSlug}.webp" alt="${value}"></button>`;
         });
         filterHtml += `</div>`;
     }
@@ -519,7 +519,7 @@
         return `<button class="stat-option ${type}-stat-option ${isUnused ? 'unused-stat' : ''} ${isActive ? 'active' : ''}" 
                 data-stat-type="${type}" ${piece ? `data-piece="${piece}"` : ''} data-value="${stat}"
                 title="${stat} - Used by ${usersCount} character(s)" ${isUnused ? 'disabled' : ''}>
-            <img class="stat-icon" src="images/stat-icon/${slugify(stat)}.webp" alt="${stat} icon">
+            <img class="stat-icon" src="images/game-icon/${slugify(stat)}.webp" alt="${stat} icon">
             <span class="stat-name">${stat}</span>
             <span class="stat-count">${usersCount}</span>
         </button>`;
