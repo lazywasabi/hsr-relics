@@ -819,7 +819,7 @@ footer {
   width: 24px;
   height: 24px;
   font-size: 1.2rem;
-  font-weight: bold;
+  font-weight: 600;
   line-height: 1;
   color: var(--primary-text-color);
   background-color: var(--stat-button-bg);

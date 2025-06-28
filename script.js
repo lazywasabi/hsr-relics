@@ -50,7 +50,7 @@
   const CHARACTER_FILTER_CONFIG = {
     rank: { label: "Rank", options: ["5", "4"] },
     element: { label: "Element", options: ["Physical", "Fire", "Ice", "Lightning", "Wind", "Quantum", "Imaginary"] },
-    path: { label: "Path", options: ["Abundance", "Destruction", "Erudition", "Harmony", "Hunt", "Nihility", "Preservation", "Remembrance"] }
+    path: { label: "Path", options: ["Abundance", "Destruction", "Erudition", "Harmony", "The Hunt", "Nihility", "Preservation", "Remembrance"] }
   };
 
   // --- Application State ---
