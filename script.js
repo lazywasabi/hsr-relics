@@ -1,9 +1,10 @@
-(function() {
+(function () {
   "use strict";
 
-  // --- Configuration URLs ---
+  // --- Configuration ---
   const BUILD_DATA_URL = "data/characters.json";
   const RELIC_INFO_URL = "data/relics.json";
+  const SITE_TITLE = "Relic Salvaging Helper for Honkai: Star Rail";
 
   // --- DOM Elements ---
   const appContent = document.getElementById("app-content");
@@ -14,308 +15,202 @@
   const navSearchButton = document.getElementById("nav-search-button");
   const mainNav = document.getElementById("main-nav");
 
-  // --- Static Data ---
-  const siteTitle = "Relic Salvaging Helper for Honkai: Star Rail";
+  // --- Application Data (populated on init) ---
+  let RELIC_SETS_DATA = [];      // Cavern Relics, sorted by ID desc
+  let ORNAMENT_SETS_DATA = [];   // Planar Ornaments, sorted by ID desc
+  let ALL_KNOWN_SETS_SORTED = [];// All sets, sorted by name length desc for parsing
+  let relicSetDetailsData = [];  // Raw data from relics.json
+  let characterBuilds = [];      // Processed character data, sorted
 
-  // --- Dynamic Data (populated during initialization) ---
-  let RELIC_SETS_DATA = []; // Cavern Relics, sorted by ID desc
-  let ORNAMENT_SETS_DATA = []; // Planar Ornaments, sorted by ID desc
-  let ALL_KNOWN_SETS_SORTED = []; // All set names, sorted by string length desc (for parsing efficiency)
-  let relicSetDetailsData = []; // Raw relic info from relics.json
-  let characterBuilds = []; // Processed character build data, sorted
-  // REMOVED: let allCharacters = []; // Replaced by using characterBuilds directly
-
-  // Precomputed maps for faster lookups, populated in initApp
-  let ALL_KNOWN_SETS_SLUG_MAP = new Map(); // Map<slug, originalSetName>
-  let ALL_KNOWN_SETS_NORMALIZED_MAP = new Map(); // Map<normalizedName, originalSetName> (lowercase, no special chars)
-  let RELIC_GROUP_MAP = new Map(); // Map<groupName, Set<setName>>
+  // Precomputed maps for faster lookups
+  const ALL_KNOWN_SETS_SLUG_MAP = new Map();      // Map<slug, originalSetName>
+  const ALL_KNOWN_SETS_NORMALIZED_MAP = new Map();// Map<normalizedName, originalSetName>
+  const RELIC_GROUP_MAP = new Map();              // Map<groupName, Set<setName>>
 
   // --- Static Schemas & Aliases ---
   const MAIN_STATS_SCHEMA = {
     HEAD: ["HP"],
     HANDS: ["ATK"],
-    BODY: [
-      "HP%", "DEF%", "ATK%", "CRIT Rate", "CRIT DMG",
-      "Effect HIT Rate", "Outgoing Healing",
-    ],
+    BODY: ["HP%", "DEF%", "ATK%", "CRIT Rate", "CRIT DMG", "Effect HIT Rate", "Outgoing Healing"],
     FEET: ["HP%", "DEF%", "ATK%", "Speed"],
-    SPHERE: [
-      "HP%", "DEF%", "ATK%", "Physical DMG", "Fire DMG", "Ice DMG",
-      "Wind DMG", "Lightning DMG", "Quantum DMG", "Imaginary DMG",
-    ],
+    SPHERE: ["HP%", "DEF%", "ATK%", "Physical DMG", "Fire DMG", "Ice DMG", "Wind DMG", "Lightning DMG", "Quantum DMG", "Imaginary DMG"],
     ROPE: ["HP%", "DEF%", "ATK%", "Break Effect", "Energy Regen Rate"],
   };
 
-  const SUBSTATS_CANONICAL = [
-    "HP", "DEF", "ATK", "HP%", "DEF%", "ATK%", "Speed", "CRIT Rate",
-    "CRIT DMG", "Break Effect", "Effect Hit Rate", "Effect RES",
-  ];
-  // Precompute for parseSubstats efficiency: sorted by length for greedy matching
-  const SORTED_SUBSTATS_CANONICAL_BY_LENGTH = [...SUBSTATS_CANONICAL].sort(
-    (a, b) => b.length - a.length,
-  );
-  const SUBSTATS_CANONICAL_LOWER = SUBSTATS_CANONICAL.map((s) =>
-    s.toLowerCase(),
-  );
+  const SUBSTATS_CANONICAL = ["HP", "DEF", "ATK", "HP%", "DEF%", "ATK%", "Speed", "CRIT Rate", "CRIT DMG", "Break Effect", "Effect Hit Rate", "Effect RES"];
+  const SORTED_SUBSTATS_CANONICAL_BY_LENGTH = [...SUBSTATS_CANONICAL].sort((a, b) => b.length - a.length);
+  const SUBSTATS_CANONICAL_LOWER = SUBSTATS_CANONICAL.map((s) => s.toLowerCase());
 
   const SUBSTAT_ALIASES = { // Keys are lowercase for consistent matching
-    hp: "HP%",
-    def: "DEF%",
-    atk: "ATK%",
-    ehr: "Effect Hit Rate",
-    "ehr%": "Effect Hit Rate",
-    "eff res": "Effect RES",
-    "eff res%": "Effect RES",
-    spd: "Speed",
-    "crit rate": "CRIT Rate",
-    "crit dmg": "CRIT DMG",
+    hp: "HP%", def: "DEF%", atk: "ATK%", spd: "Speed", ehr: "Effect Hit Rate", "ehr%": "Effect Hit Rate",
+    "eff res": "Effect RES", "eff res%": "Effect RES", "crit rate": "CRIT Rate", "crit dmg": "CRIT DMG",
     "break effect%": "Break Effect",
   };
   
-  // --- NEW: Character Filter Configuration ---
   const CHARACTER_FILTER_CONFIG = {
     rank: { label: "Rank", options: ["5", "4"] },
     element: { label: "Element", options: ["Physical", "Fire", "Ice", "Lightning", "Wind", "Quantum", "Imaginary"] },
     path: { label: "Path", options: ["Abundance", "Destruction", "Erudition", "Harmony", "Hunt", "Nihility", "Preservation", "Remembrance"] }
   };
-  
-  // --- Search State ---
+
+  // --- Application State ---
   let searchableListItems = [];
   let currentSearchFocusIndex = -1;
-  let lastUniversalSearchQueryValue = ""; // Remembers search query for current session
+  let previousPageInfo = { type: null, slug: null, filters: null };
+  let characterListFilters = { rank: new Set(), element: new Set(), path: new Set() };
 
-  // --- Filter Persistence State ---
-  let previousPageInfo = {
-    type: null, // e.g., 'relicSet', 'characterPage', 'home'
-    slug: null, // e.g., 'genius-of-brilliant-stars'
-    filters: null // { selectedMainStats, selectedSubStats, requiredSubstatCount } for relicSet pages
-  };
-  
-  // --- NEW: Global Character Filter State ---
-  let characterListFilters = {
-    rank: new Set(),
-    element: new Set(),
-    path: new Set()
-  };
 
   // --- Utility Functions ---
   function slugify(text) {
     if (!text) return "";
     return text.toString().toLowerCase()
-      .replace(/\s+/g, "-") // Replace spaces with -
-      .replace(/[^\w-]+/g, "") // Remove all non-word chars
-      .replace(/--+/g, "-"); // Replace multiple - with single -
+      .replace(/\s+/g, "-").replace(/[^\w-]+/g, "").replace(/--+/g, "-");
   }
 
   function deslugify(slug) {
     if (!slug) return "";
     return slug.replace(/-/g, " ")
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
+      .split(" ").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
   }
 
   /**
-   * Finds the original set name from a slug, trying various matching strategies.
-   * Uses precomputed maps for efficiency.
+   * Finds the original set name from a slug using precomputed maps.
    */
   function findOriginalSetName(slug) {
     if (!slug) return "";
     if (ALL_KNOWN_SETS_SLUG_MAP.has(slug)) {
       return ALL_KNOWN_SETS_SLUG_MAP.get(slug);
     }
-    // Try matching against a normalized version (all lowercase, no hyphens)
     const normalizedSlug = slug.toLowerCase().replace(/-/g, "");
     if (ALL_KNOWN_SETS_NORMALIZED_MAP.has(normalizedSlug)) {
       return ALL_KNOWN_SETS_NORMALIZED_MAP.get(normalizedSlug);
     }
-    // Fallback: deslugify and re-slugify to check if it matches a known slug
     const potentialName = deslugify(slug);
-    if (ALL_KNOWN_SETS_SLUG_MAP.has(slugify(potentialName))) {
-      return potentialName;
-    }
-    // If no match, return the deslugified version as a best guess
-    return potentialName;
+    return ALL_KNOWN_SETS_SLUG_MAP.has(slugify(potentialName)) ? potentialName : potentialName;
   }
-
+  
+  /**
+   * Gets the recommended main stats for a specific relic piece for a character.
+   */
   function getCharacterPieceStats(character, pieceType) {
     if (!character || !pieceType) return [];
     const pTypeLower = pieceType.toLowerCase();
-    // Handle specific property names for sphere and rope
-    if (pTypeLower === "sphere") return character.planarSphere || [];
-    if (pTypeLower === "rope") return character.linkRope || [];
-    // For other pieces, property name matches pieceType (e.g., character.body)
-    return character[pTypeLower] || [];
+    const pieceKeyMap = { sphere: 'planarSphere', rope: 'linkRope' };
+    const key = pieceKeyMap[pTypeLower] || pTypeLower;
+    return character[key] || [];
   }
+
 
   // --- Data Parsing Functions ---
 
   /**
-   * Parses a string containing comma-separated set names or concatenated set names.
-   * Uses a greedy matching approach based on ALL_KNOWN_SETS_SORTED (longest names first).
-   * Handles "Group:XXX" aliases by expanding them.
+   * Parses a string of relic set names, handling comma separation,
+   * concatenation, and "Group:" aliases.
    */
   function parseSetListString(setString) {
-    if (!setString || typeof setString !== "string") return [];
-    const foundSets = new Set(); // Use a Set to automatically handle duplicates
+    if (typeof setString !== 'string' || !setString) return [];
+    
+    const foundSets = new Set();
     let remainingString = setString.trim();
     const groupPrefix = "Group:";
 
     while (remainingString.length > 0) {
       let matched = false;
-
-      // Priority 1: Check for "Group:XXX" alias
+      
+      // Attempt to match a "Group:XXX" alias first
       if (remainingString.startsWith(groupPrefix)) {
-        let groupTokenEndIndex = remainingString.indexOf(',');
-        if (groupTokenEndIndex === -1) { // If no comma, it's the last token
-          groupTokenEndIndex = remainingString.length;
-        }
-        const groupToken = remainingString.substring(0, groupTokenEndIndex).trim(); // e.g., "Group:SPD6%"
-        const groupName = groupToken.substring(groupPrefix.length); // e.g., "SPD6%"
+        let groupTokenEndIndex = remainingString.indexOf(',') > -1 ? remainingString.indexOf(',') : remainingString.length;
+        const groupToken = remainingString.substring(0, groupTokenEndIndex).trim();
+        const groupName = groupToken.substring(groupPrefix.length);
 
         if (RELIC_GROUP_MAP.has(groupName)) {
-          RELIC_GROUP_MAP.get(groupName).forEach(setInGroup => foundSets.add(setInGroup));
-          remainingString = remainingString.substring(groupToken.length).trim();
-          if (remainingString.startsWith(",")) {
-            remainingString = remainingString.substring(1).trim();
-          }
+          RELIC_GROUP_MAP.get(groupName).forEach(set => foundSets.add(set));
           matched = true;
         } else {
-          // If group name not found in map, treat it as an unknown token and try to skip it
-          // This prevents infinite loops if a "Group:XXX" is malformed or not defined.
           console.warn(`Unknown relic group: ${groupToken}`);
-          remainingString = remainingString.substring(groupToken.length).trim();
-           if (remainingString.startsWith(",")) {
-            remainingString = remainingString.substring(1).trim();
-          }
-          // We don't set matched = true here, because we didn't *successfully* match a group.
-          // The loop will continue, and if nothing else matches, it will break.
-          // Or, if there was a comma after the unknown group, it will proceed to parse the next item.
-          // If it was the *only* thing in remainingString, the outer loop condition will fail.
-          // This part handles cases like "Group:Unknown,SetA" -> skips "Group:Unknown", parses "SetA"
-          // And "Group:Unknown" alone -> loop terminates.
-          // Essentially, we consume the unknown group token and let the next iteration (or set matching) handle what's left.
+        }
+        
+        remainingString = remainingString.substring(groupToken.length).trim().replace(/^,/, '').trim();
+        if(matched) continue;
+      }
+
+      // If no group matched, attempt to match a standard set name
+      for (const setName of ALL_KNOWN_SETS_SORTED) {
+        if (remainingString.startsWith(setName)) {
+          foundSets.add(setName);
+          remainingString = remainingString.substring(setName.length).trim().replace(/^,/, '').trim();
+          matched = true;
+          break; // Found the longest possible match, restart loop
         }
       }
 
-      // Priority 2: Check for actual set names if no group was matched or if group logic wants to proceed
       if (!matched) {
-        for (const setName of ALL_KNOWN_SETS_SORTED) {
-          if (remainingString.startsWith(setName)) {
-            foundSets.add(setName); // Add to Set
-            remainingString = remainingString.substring(setName.length).trim();
-            if (remainingString.startsWith(",")) {
-              remainingString = remainingString.substring(1).trim();
-            }
-            matched = true;
-            break; // Found the longest possible match for this part of the string
-          }
-        }
-      }
-      if (!matched) {
-        // If neither a known group nor a known set name matches the start of the remaining string,
-        // and we didn't consume an unknown group token in this iteration, break to avoid infinite loop.
-        // This can happen if there's an unrecognized token that's not a "Group:XXX".
-        if (remainingString.length > 0 && !remainingString.startsWith(groupPrefix)) {
-             console.warn(`Unparseable relic string segment: ${remainingString.substring(0, Math.min(20, remainingString.length))}...`);
+        // Avoid infinite loop on unparseable string segments
+        if (remainingString.length > 0) {
+          console.warn(`Unparseable relic string segment: "${remainingString.substring(0, 20)}..."`);
         }
         break;
       }
     }
-    return Array.from(foundSets); // Convert Set to Array
+    return Array.from(foundSets);
   }
 
   /**
-   * Parses a substat string into a list of canonical substat names and the original comment.
-   * Handles various delimiters and aliases.
+   * Parses a substat priority string into canonical names and preserves the original comment.
    */
   function parseSubstats(substatStr) {
-    if (!substatStr) return {
-      clean: [],
-      comment: ""
-    };
+    if (!substatStr) return { clean: [], comment: "" };
 
-    const originalComment = substatStr; // Preserve the original string for display
-    // Remove content within parentheses or brackets (e.g., notes, conditions) before parsing
     let tempStr = substatStr.replace(/\([^)]*\)|\[[^\]]*\]/g, "").trim();
-    const parts = tempStr.split(/[>≥=/,]+/); // Split by common priority delimiters
-    const cleanSubstats = [];
-    const seenSubstats = new Set(); // To avoid duplicates
+    const parts = tempStr.split(/[>≥=/,]+/);
+    const seenSubstats = new Set();
 
-    for (const part of parts) {
+    parts.forEach(part => {
       let potentialStat = part.trim().toLowerCase();
-      if (!potentialStat) continue;
+      if (!potentialStat) return;
 
-      let matchedCanonicalStat = null;
+      let matchedCanonicalStat = SUBSTAT_ALIASES[potentialStat] || null;
 
-      // Priority 1: Exact alias match
-      if (SUBSTAT_ALIASES[potentialStat]) {
-        matchedCanonicalStat = SUBSTAT_ALIASES[potentialStat];
-      } else {
-        // Priority 2: Exact canonical stat match (case-insensitive)
+      if (!matchedCanonicalStat) {
         const canonicalIndex = SUBSTATS_CANONICAL_LOWER.indexOf(potentialStat);
         if (canonicalIndex !== -1) {
           matchedCanonicalStat = SUBSTATS_CANONICAL[canonicalIndex];
         }
       }
 
-      // Priority 3 & 4: Partial matches (if no exact match found)
       if (!matchedCanonicalStat) {
-        // Partial match against canonical stats (longest first for accuracy)
         for (const canonical of SORTED_SUBSTATS_CANONICAL_BY_LENGTH) {
           if (potentialStat.includes(canonical.toLowerCase())) {
             matchedCanonicalStat = canonical;
             break;
           }
         }
-        // If still no match, try partial match against aliases
-        if (!matchedCanonicalStat) {
-          for (const alias in SUBSTAT_ALIASES) {
-            if (potentialStat.includes(alias)) {
-              matchedCanonicalStat = SUBSTAT_ALIASES[alias];
-              break;
-            }
-          }
-        }
       }
 
       if (matchedCanonicalStat && !seenSubstats.has(matchedCanonicalStat)) {
-        cleanSubstats.push(matchedCanonicalStat);
         seenSubstats.add(matchedCanonicalStat);
       }
-    }
-    return {
-      clean: cleanSubstats,
-      comment: originalComment
-    };
-  }
+    });
 
-  /**
-   * Aggregates set names from multiple numbered properties (e.g., Relic1, Relic2...).
-   */
+    return { clean: Array.from(seenSubstats), comment: substatStr };
+  }
+  
   function aggregateAllSets(item, basePropName, numSlots = 5) {
     const allSets = new Set();
     for (let i = 1; i <= numSlots; i++) {
-      const slotKey = `${basePropName}${i}`;
-      if (item[slotKey]) {
-        parseSetListString(item[slotKey]).forEach(set => allSets.add(set));
+      if (item[`${basePropName}${i}`]) {
+        parseSetListString(item[`${basePropName}${i}`]).forEach(set => allSets.add(set));
       }
     }
     return Array.from(allSets);
   }
 
-  /**
-   * Processes the raw character build data from JSON into a structured format.
-   */
   function processData(jsonData) {
     characterBuilds = jsonData.map((item) => {
       const substatsParsed = parseSubstats(item.Substats);
-
-      // Aggregate relic and planetary sets as "Concat" fields are no longer used from source
       const allRelicSets = aggregateAllSets(item, "Relic");
       const allPlanetarySets = aggregateAllSets(item, "Planetary");
 
-      // --- MODIFIED: Added Display Name and character properties ---
       return {
         name: item.Name,
         displayName: item["Display Name"] || item.Name,
@@ -324,196 +219,139 @@
         path: item.Path,
         ID: item.ID,
         Release: item.Release,
-        body: item.Body ? item.Body.split(",").map((s) => s.trim()) : [],
-        feet: item.Feet ? item.Feet.split(",").map((s) => s.trim()) : [],
-        relicSetsAll: allRelicSets, // All unique relic sets mentioned for the character
-        planetarySetsAll: allPlanetarySets, // All unique ornament sets
-        // Individual relic/planetary options (up to 5)
+        body: item.Body?.split(",").map((s) => s.trim()) ?? [],
+        feet: item.Feet?.split(",").map((s) => s.trim()) ?? [],
+        planarSphere: item["Planar Sphere"]?.split(",").map((s) => s.trim()) ?? [],
+        linkRope: item["Link Rope"]?.split(",").map((s) => s.trim()) ?? [],
+        relicSetsAll: allRelicSets,
+        planetarySetsAll: allPlanetarySets,
         relic1: parseSetListString(item.Relic1),
         relic2: parseSetListString(item.Relic2),
         relic3: parseSetListString(item.Relic3),
         relic4: parseSetListString(item.Relic4),
         relic5: parseSetListString(item.Relic5),
-        planarSphere: item["Planar Sphere"] ?
-          item["Planar Sphere"].split(",").map((s) => s.trim()) : [],
-        linkRope: item["Link Rope"] ?
-          item["Link Rope"].split(",").map((s) => s.trim()) : [],
         planetary1: parseSetListString(item.Planetary1),
         planetary2: parseSetListString(item.Planetary2),
         planetary3: parseSetListString(item.Planetary3),
         planetary4: parseSetListString(item.Planetary4),
         planetary5: parseSetListString(item.Planetary5),
-        substatsClean: substatsParsed.clean, // Parsed, canonical substat names
-        substatsComment: substatsParsed.comment, // Original substat string with notes
+        substatsClean: substatsParsed.clean,
+        substatsComment: substatsParsed.comment,
       };
     });
   }
 
+
   // --- Rendering Functions ---
 
-  /**
-   * Generic helper to render a list of items (characters, relics, ornaments).
-   * --- MODIFIED: Now handles character objects and adds filter classes. ---
-   */
-  function _renderItemsList(items, itemType, listTitle, itemClass = "", limit = 0) {
-    let listHtml = "";
-    let itemsToRender = items;
-
-    // Apply limit if specified
-    if (limit > 0) {
-      itemsToRender = items.slice(0, limit);
+  function _renderItemsList(items, itemType, listTitle, itemClass = "") {
+    if (items.length === 0) {
+      return `<ul class="content-list item-grid-list"><li class="no-results-in-list">No ${listTitle.toLowerCase()} found.</li></ul>`;
     }
+    const listHtml = items.map((item) => {
+      let name, slug, href, imgSrc, extraClasses = "";
 
-    if (itemsToRender.length > 0) {
-      listHtml = itemsToRender.map((item) => {
-        let name, slug, href, imgSrc, extraClasses = "";
-
-        // Determine href and image source based on item type
-        if (itemType === "cavern-relic" || itemType === "planar-ornament") {
-          name = item; // item is a string
-          slug = slugify(name);
-          href = itemType === "cavern-relic" ? `#/relics/${slug}` : `#/ornaments/${slug}`;
-          imgSrc = `images/relic/${slug}.webp`;
-        } else if (itemType === "character") {
-          name = item.displayName; // item is an object
-          slug = slugify(item.name); // slug is based on original name for consistency
-          href = `#/characters/${slug}`;
-          imgSrc = `images/character/${slug}.webp`;
-          // Add filterable classes
-          extraClasses = `character-${slug} character-rank-${item.rank} character-element-${slugify(item.element)} character-path-${slugify(item.path)}`;
-        }
-
-        return `
-            <li class="${extraClasses}">
-                <a href="${href}" title="${name}">
-                    <img src="${imgSrc}" alt="" class="item-icon ${itemClass}">
-                    <span>${name}</span>
-                </a>
-            </li>`;
-      }).join("");
-    } else {
-      listHtml = `<li class="no-results-in-list">No ${listTitle.toLowerCase()} found.</li>`;
-    }
+      if (itemType === "cavern-relic" || itemType === "planar-ornament") {
+        name = item;
+        slug = slugify(name);
+        href = itemType === "cavern-relic" ? `#/relics/${slug}` : `#/ornaments/${slug}`;
+        imgSrc = `images/relic/${slug}.webp`;
+      } else { // character
+        name = item.displayName;
+        slug = slugify(item.name);
+        href = `#/characters/${slug}`;
+        imgSrc = `images/character/${slug}.webp`;
+        extraClasses = `character-rank-${item.rank} character-element-${slugify(item.element)} character-path-${slugify(item.path)}`;
+      }
+      return `<li class="${extraClasses}"><a href="${href}" title="${name}"><img src="${imgSrc}" alt="" class="item-icon ${itemClass}"><span>${name}</span></a></li>`;
+    }).join("");
     return `<ul class="content-list item-grid-list">${listHtml}</ul>`;
+  }
+  
+  function _renderItemsSublist(items, type, title, itemClass, limit) {
+    const limitedItems = limit > 0 ? items.slice(0, limit) : items;
+    const isOrnament = type === 'planar-ornament';
+    const linkPath = isOrnament ? 'ornaments' : `${type}s`;
+    const itemTypeForList = (type === 'relic') ? 'cavern-relic' : type;
+
+    return `
+      <section class="home-section">
+          <div class="page-header"><a href="/#/${linkPath}"><img src="/images/icon/${type}.svg"><h2>${title}</h2></a></div>
+          <div class="item-list-scroll-container character-list">
+              ${_renderItemsList(limitedItems, itemTypeForList, title, itemClass)}
+          </div>
+      </section>
+    `;
   }
 
   function renderHomePage() {
     const homeNotice = document.querySelector("#homeNotice").content.cloneNode(true);
-    document.title = siteTitle;
+    document.title = SITE_TITLE;
     appContent.innerHTML = `
       <div class="page-container home-page-layout">
-          <section class="home-section">
-              <div class="page-header"><a href="/#/relics"><img src="/images/icon/relic.svg"><h2>Cavern Relics</h2></a></div>
-              <div class="item-list-scroll-container character-list">
-                  ${_renderItemsList(RELIC_SETS_DATA, "cavern-relic", "Cavern Relics", "character-list-icon", 8)}
-              </div>
-          </section>
-          <section class="home-section">
-              <div class="page-header"><a href="/#/ornaments"><img src="/images/icon/ornaments.svg"><h2>Planar Ornaments</h2></a></div>
-              <div class="item-list-scroll-container character-list">
-                  ${_renderItemsList(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "character-list-icon", 8)}
-              </div>
-          </section>
-          <section class="home-section">
-              <div class="page-header"><a href="/#/characters"><img src="/images/icon/character.svg"><h2>Characters</h2></a></div>
-              <div class="item-list-scroll-container character-list">
-                  ${_renderItemsList(characterBuilds, "character", "Characters", "character-list-icon", 8)}
-              </div>
-          </section>
+        ${_renderItemsSublist(RELIC_SETS_DATA, "relic", "Cavern Relics", "character-list-icon", 8)}
+        ${_renderItemsSublist(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "character-list-icon", 8)}
+        ${_renderItemsSublist(characterBuilds, "character", "Characters", "character-list-icon", 8)}
       </div>`;
     appContent.prepend(homeNotice);
-    previousPageInfo = {
-      type: 'home',
-      slug: null,
-      filters: null
-    };
+    previousPageInfo = { type: 'home', slug: null, filters: null };
+  }
+
+  function renderListPage(title, data, itemType, itemClass) {
+    document.title = `${title} - ${SITE_TITLE}`;
+    appContent.innerHTML = `
+      <div class="page-container">
+          <div class="page-header"><h2>${title}</h2></div>
+          <div class="item-list-scroll-container full-page-list">
+              ${_renderItemsList(data, itemType, title, itemClass)}
+          </div>
+      </div>`;
+    previousPageInfo = { type: `${itemType}List`, slug: null, filters: null };
   }
 
   function renderCavernRelicsPage() {
-    document.title = `Cavern Relics - ${siteTitle}`;
-    appContent.innerHTML = `
-      <div class="page-container">
-          <div class="page-header"><h2>Cavern Relics</h2></div>
-          <div class="item-list-scroll-container full-page-list">
-              ${_renderItemsList(RELIC_SETS_DATA, "cavern-relic", "Cavern Relics", "relic-list-icon")}
-          </div>
-      </div>`;
-    previousPageInfo = {
-      type: 'relicList',
-      slug: null,
-      filters: null
-    };
+    renderListPage("Cavern Relics", RELIC_SETS_DATA, "cavern-relic", "relic-list-icon");
   }
 
   function renderPlanarOrnamentsPage() {
-    document.title = `Planar Ornaments - ${siteTitle}`;
-    appContent.innerHTML = `
-      <div class="page-container">
-           <div class="page-header"><h2>Planar Ornaments</h2></div>
-          <div class="item-list-scroll-container full-page-list">
-              ${_renderItemsList(ORNAMENT_SETS_DATA, "planar-ornament", "Planar Ornaments", "relic-list-icon")}
-          </div>
-      </div>`;
-    previousPageInfo = {
-      type: 'ornamentList',
-      slug: null,
-      filters: null
-    };
+    renderListPage("Planar Ornaments", ORNAMENT_SETS_DATA, "planar-ornament", "relic-list-icon");
   }
-  
-  // --- NEW: Helper to render the character filter bar ---
+
   function _renderCharacterFilterBar(containerId = 'character-filter-bar') {
     let filterHtml = `<div id="${containerId}" class="character-filter-bar">`;
-
     for (const [type, config] of Object.entries(CHARACTER_FILTER_CONFIG)) {
         filterHtml += `<div class="filter-group" data-filter-type="${type}">`;
         config.options.forEach(value => {
             const isActive = characterListFilters[type].has(value);
-            // Using a placeholder icon as requested
             const iconSlug = type === 'rank' ? `rank-${value}` : slugify(value);
-            filterHtml += `
-                <button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${value}">
-                    <img src="images/icon/filter/${iconSlug}.webp" alt="${value}">
-                </button>`;
+            filterHtml += `<button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${value}"><img src="images/icon/filter/${iconSlug}.webp" alt="${value}"></button>`;
         });
         filterHtml += `</div>`;
     }
-
     filterHtml += `<button class="filter-reset-btn">Reset</button></div>`;
     return filterHtml;
   }
   
-  // --- NEW: Helper to apply character filters ---
   function applyCharacterFilters(characters) {
     const isAnyFilterActive = Object.values(characterListFilters).some(s => s.size > 0);
-    if (!isAnyFilterActive) {
-        return characters;
-    }
+    if (!isAnyFilterActive) return characters;
 
     return characters.filter(char => {
-        const rankMatch = characterListFilters.rank.size === 0 || characterListFilters.rank.has(char.rank);
-        const elementMatch = characterListFilters.element.size === 0 || characterListFilters.element.has(char.element);
-        const pathMatch = characterListFilters.path.size === 0 || characterListFilters.path.has(char.path);
-        return rankMatch && elementMatch && pathMatch;
+        return Object.entries(characterListFilters).every(([type, filterSet]) => {
+            return filterSet.size === 0 || filterSet.has(char[type].toString());
+        });
     });
   }
 
-  // --- MODIFIED: Renders the full character list page with filters ---
   function renderCharactersListPage() {
-    document.title = `Characters - ${siteTitle}`;
-    
-    // Reset filters when navigating to this page
-    Object.keys(characterListFilters).forEach(key => characterListFilters[key].clear());
+    document.title = `Characters - ${SITE_TITLE}`;
+    Object.values(characterListFilters).forEach(set => set.clear());
     
     appContent.innerHTML = `
       <div class="page-container">
           <div class="page-header"><h2>Characters</h2></div>
-          <div id="character-list-controls">
-            ${_renderCharacterFilterBar('main-character-filter-bar')}
-          </div>
-          <div id="character-list-container" class="item-list-scroll-container full-page-list character-list">
-              ${/* Content will be rendered by JS */''}
-          </div>
+          <div id="character-list-controls">${_renderCharacterFilterBar('main-character-filter-bar')}</div>
+          <div id="character-list-container" class="item-list-scroll-container full-page-list character-list"></div>
           <p id="no-filtered-characters-message" style="display:none;">No characters match the selected filters.</p>
       </div>`;
 
@@ -521,19 +359,14 @@
     const noResultsMessage = document.getElementById('no-filtered-characters-message');
     const filterBar = document.getElementById('main-character-filter-bar');
 
-    function renderFilteredList() {
+    const renderFilteredList = () => {
         const filteredCharacters = applyCharacterFilters(characterBuilds);
+        const hasResults = filteredCharacters.length > 0;
         
-        if (filteredCharacters.length > 0) {
-            listContainer.innerHTML = _renderItemsList(filteredCharacters, "character", "Characters", "character-list-icon");
-            listContainer.style.display = '';
-            noResultsMessage.style.display = 'none';
-        } else {
-            listContainer.innerHTML = '';
-            listContainer.style.display = 'none';
-            noResultsMessage.style.display = 'block';
-        }
-    }
+        listContainer.innerHTML = hasResults ? _renderItemsList(filteredCharacters, "character", "Characters", "character-list-icon") : '';
+        listContainer.style.display = hasResults ? '' : 'none';
+        noResultsMessage.style.display = hasResults ? 'none' : 'block';
+    };
     
     filterBar.addEventListener('click', (event) => {
         const filterBtn = event.target.closest('.filter-option');
@@ -542,7 +375,6 @@
         if (filterBtn) {
             const type = filterBtn.parentElement.dataset.filterType;
             const value = filterBtn.dataset.filterValue;
-
             if (characterListFilters[type].has(value)) {
                 characterListFilters[type].delete(value);
                 filterBtn.classList.remove('active');
@@ -550,12 +382,11 @@
                 characterListFilters[type].add(value);
                 filterBtn.classList.add('active');
             }
-            renderFilteredList();
         } else if (resetBtn) {
-            Object.keys(characterListFilters).forEach(key => characterListFilters[key].clear());
+            Object.values(characterListFilters).forEach(set => set.clear());
             filterBar.querySelectorAll('.filter-option.active').forEach(btn => btn.classList.remove('active'));
-            renderFilteredList();
         }
+        if(filterBtn || resetBtn) renderFilteredList();
     });
 
     renderFilteredList(); // Initial render
@@ -565,84 +396,48 @@
   function renderCharacterPage(characterName) {
     const character = characterBuilds.find((c) => c.name === characterName);
     if (!character) {
-      document.title = `Not Found - ${siteTitle}`;
+      document.title = `Not Found - ${SITE_TITLE}`;
       appContent.innerHTML = `<div class="page-container"><p>Character not found: ${characterName}</p><p><a href="#">Go Home</a></p></div>`;
-      previousPageInfo = {
-        type: 'error',
-        slug: characterName,
-        filters: null
-      };
+      previousPageInfo = { type: 'error', slug: characterName, filters: null };
       return;
     }
-    // --- MODIFIED: Use displayName for UI ---
-    document.title = `${character.displayName} - ${siteTitle}`;
+    
+    document.title = `${character.displayName} - ${SITE_TITLE}`;
 
     const formatSetList = (sets) => {
       if (!sets || sets.length === 0) return "N/A";
-      return sets.map((s) => {
-        const isOrnament = ORNAMENT_SETS_DATA.includes(s);
+      return sets.map(s => {
         const slug = slugify(s);
-        const href = isOrnament ? `#/ornaments/${slug}` : `#/relics/${slug}`;
-        return `
-            <span class="set-name-link">
-                <a href="${href}">
-                    <img src="images/relic/${slug}.webp" alt="" class="item-icon inline-icon">
-                    <span class="set-name-text">${s}</span>
-                </a>
-            </span>`;
+        const href = ORNAMENT_SETS_DATA.includes(s) ? `#/ornaments/${slug}` : `#/relics/${slug}`;
+        return `<span class="set-name-link"><a href="${href}"><img src="images/relic/${slug}.webp" alt="" class="item-icon inline-icon"><span class="set-name-text">${s}</span></a></span>`;
       }).join("");
     };
 
-    const relicRecommendations = [
-      character.relic1, character.relic2, character.relic3,
-      character.relic4, character.relic5,
-    ].filter((r) => r && r.length > 0);
+    const renderRecommendations = (recommendations, title, type) => {
+      const validRecs = recommendations.filter(r => r && r.length > 0);
+      let content;
+      if (validRecs.length > 0) {
+        content = validRecs.map((recSet, index) => {
+          let optionTitle = `Option ${index + 1}`;
+          if (type === 'relic' && recSet.length >= 2 && recSet.every(setName => RELIC_SETS_DATA.includes(setName))) {
+            optionTitle += " (2 pcs + 2 pcs)";
+          }
+          return `<div class="stat-group"><h4>${optionTitle}</h4><p class="relic-option-list">${formatSetList(recSet)}</p></div>`;
+        }).join("");
+      } else {
+        content = `<p>No specific ${type} recommendations found.</p>`;
+      }
+      return `<div class="build-section"><h3>${title}</h3><div class="build-grid">${content}</div></div>`;
+    };
 
-    const ornamentRecommendations = [
-      character.planetary1, character.planetary2, character.planetary3,
-      character.planetary4, character.planetary5,
-    ].filter((p) => p && p.length > 0);
+    const relicRecs = [character.relic1, character.relic2, character.relic3, character.relic4, character.relic5];
+    const ornamentRecs = [character.planetary1, character.planetary2, character.planetary3, character.planetary4, character.planetary5];
 
     appContent.innerHTML = `
       <div class="page-container">
-          <div class="page-header">
-              <div class="page-title-with-icon">
-                  <img src="images/character-sticker/${slugify(character.name)}.webp" alt="${character.displayName}" class="page-main-icon">
-                  <h2>${character.displayName}</h2>
-              </div>
-          </div>
-          <div class="build-section">
-              <h3>Cavern Relics</h3>
-              <div class="build-grid build-relics">
-                  ${relicRecommendations.length > 0
-                    ? relicRecommendations.map((relicSetOption, index) => {
-                        // Check if it's a 2+2 piece combination from Cavern Relics
-                        const isTwoPlusTwo = relicSetOption.length >= 2 &&
-                                           relicSetOption.every(setName => RELIC_SETS_DATA.includes(setName));
-                        const optionTitle = `Option ${index + 1}${isTwoPlusTwo ? " (2 pcs + 2 pcs)" : ""}`;
-                        return `
-                          <div class="stat-group">
-                              <h4>${optionTitle}</h4>
-                              <p class="relic-option-list">${formatSetList(relicSetOption)}</p>
-                          </div>`;
-                      }).join("")
-                    : "<p>No specific relic set recommendations found.</p>"
-                  }
-              </div>
-          </div>
-          <div class="build-section">
-              <h3>Planar Ornaments</h3>
-               <div class="build-grid build-planer-ornaments">
-                  ${ornamentRecommendations.length > 0
-                    ? ornamentRecommendations.map((ornamentSet, index) => `
-                          <div class="stat-group">
-                              <h4>Option ${index + 1}</h4>
-                              <p class="relic-option-list">${formatSetList(ornamentSet)}</p>
-                          </div>`).join("")
-                    : "<p>No specific ornament set recommendations found.</p>"
-                  }
-              </div>
-          </div>
+          <div class="page-header"><div class="page-title-with-icon"><img src="images/character-sticker/${slugify(character.name)}.webp" alt="${character.displayName}" class="page-main-icon"><h2>${character.displayName}</h2></div></div>
+          ${renderRecommendations(relicRecs, "Cavern Relics", "relic")}
+          ${renderRecommendations(ornamentRecs, "Planar Ornaments", "ornament")}
           <div class="build-section">
               <h3>Main Stats Priority</h3>
               <div class="build-grid build-main-stats">
@@ -655,349 +450,227 @@
           <div class="build-section">
               <h3>Substats Priority</h3>
               <div class="stat-group">
-                  <ul>
-                      ${character.substatsClean.map((s) => `<li>${s}</li>`).join("") || "<li>No specific substat priorities listed.</li>"}
-                  </ul>
+                  <ul>${character.substatsClean.map((s) => `<li>${s}</li>`).join("") || "<li>No specific substat priorities listed.</li>"}</ul>
                   ${character.substatsComment ? `<div class="substat-comment"><strong>Note:</strong> ${character.substatsComment}</div>` : ""}
               </div>
           </div>
       </div>`;
-    previousPageInfo = {
-      type: 'characterPage',
-      slug: slugify(character.name),
-      filters: null
-    };
+    previousPageInfo = { type: 'characterPage', slug: slugify(character.name), filters: null };
   }
 
   function renderRelicSetPage(setSlug) {
     const setName = findOriginalSetName(setSlug);
-    const isActualOrnament = ORNAMENT_SETS_DATA.includes(setName);
-    const isActualRelic = RELIC_SETS_DATA.includes(setName);
+    const isOrnament = ORNAMENT_SETS_DATA.includes(setName);
+    const isRelic = RELIC_SETS_DATA.includes(setName);
 
-    if (!isActualOrnament && !isActualRelic) {
-      document.title = `Not Found - ${siteTitle}`;
+    if (!isOrnament && !isRelic) {
+      document.title = `Not Found - ${SITE_TITLE}`;
       appContent.innerHTML = `<div class="page-container"><p>Relic set not found: ${setName}</p><p><a href="#">Go Home</a></p></div>`;
-      previousPageInfo = {
-        type: 'error',
-        slug: setSlug,
-        filters: null
-      };
+      previousPageInfo = { type: 'error', slug: setSlug, filters: null };
       return;
     }
-    document.title = `${setName} - ${siteTitle}`;
+    document.title = `${setName} - ${SITE_TITLE}`;
 
-    const setData = relicSetDetailsData.find((s) => s.Name === setName);
+    const setData = relicSetDetailsData.find(s => s.Name === setName);
     let setInfoHtml = "";
     if (setData) {
-      setInfoHtml += `<div class="relic-set-bonuses">`;
-      if (setData["2-Piece Bonus"]) {
-        setInfoHtml += `<h4>2-Piece Bonus</h4><p>${setData["2-Piece Bonus"]}</p>`;
-      }
-      if (setData["4-Piece Bonus"] && setData["4-Piece Bonus"].trim() !== "" && isActualRelic) { // 4-piece only for Cavern Relics
-        setInfoHtml += `<h4>4-Piece Bonus</h4><p>${setData["4-Piece Bonus"]}</p>`;
-      }
-      setInfoHtml += `</div>`;
+        setInfoHtml = `<div class="relic-set-bonuses">
+            ${setData["2-Piece Bonus"] ? `<h4>2-Piece Bonus</h4><p>${setData["2-Piece Bonus"]}</p>` : ''}
+            ${isRelic && setData["4-Piece Bonus"] ? `<h4>4-Piece Bonus</h4><p>${setData["4-Piece Bonus"]}</p>` : ''}
+        </div>`;
     }
 
-    const charactersUsingSet = characterBuilds.filter(char => {
-      return isActualOrnament ?
-        char.planetarySetsAll.includes(setName) :
-        char.relicSetsAll.includes(setName);
-    });
+    const charactersUsingSet = characterBuilds.filter(char =>
+        isOrnament ? char.planetarySetsAll.includes(setName) : char.relicSetsAll.includes(setName)
+    );
 
-    // Filter state initialization
-    let selectedMainStats = {
-      BODY: [],
-      FEET: [],
-      SPHERE: [],
-      ROPE: []
-    };
-    let selectedSubStats = [];
-    // --- MODIFIED: Replaced substatLogic with requiredSubstatCount ---
-    let requiredSubstatCount = 1;
-
-    // Load filters from sessionStorage if available (e.g., after back navigation)
+    // Load or initialize filters
     const cacheKey = `relicFilterState_${setSlug}`;
     const cachedFiltersJson = sessionStorage.getItem(cacheKey);
+    let initialFilters = {
+        selectedMainStats: { BODY: [], FEET: [], SPHERE: [], ROPE: [] },
+        selectedSubStats: [],
+        requiredSubstatCount: 1
+    };
     if (cachedFiltersJson) {
       try {
-        const cachedFilters = JSON.parse(cachedFiltersJson);
-        selectedMainStats = cachedFilters.selectedMainStats || selectedMainStats;
-        selectedSubStats = cachedFilters.selectedSubStats || selectedSubStats;
-        requiredSubstatCount = cachedFilters.requiredSubstatCount || requiredSubstatCount;
+        initialFilters = { ...initialFilters, ...JSON.parse(cachedFiltersJson) };
       } catch (e) {
         console.error("Error parsing cached filters:", e);
-        // sessionStorage.removeItem(cacheKey); // Corrupted data could be cleared
       } finally {
         sessionStorage.removeItem(cacheKey); // Always clear after attempting to load
       }
     }
+    let { selectedMainStats, selectedSubStats, requiredSubstatCount } = initialFilters;
+    
+    // Update global page info for saving state on navigation
+    previousPageInfo = { type: 'relicSet', slug: setSlug, filters: { selectedMainStats, selectedSubStats, requiredSubstatCount }};
+    
+    const renderStatOptions = (stats, type, piece = null) => stats.map(stat => {
+        const usersCount = charactersUsingSet.filter(char => {
+            if (type === 'main') {
+                return getCharacterPieceStats(char, piece).includes(stat);
+            }
+            return char.substatsClean.includes(stat);
+        }).length;
+        const isUnused = usersCount === 0;
+        const isActive = piece ? selectedMainStats[piece]?.includes(stat) : selectedSubStats.includes(stat);
+        
+        return `<button class="stat-option ${type}-stat-option ${isUnused ? 'unused-stat' : ''} ${isActive ? 'active' : ''}" 
+                data-stat-type="${type}" ${piece ? `data-piece="${piece}"` : ''} data-value="${stat}"
+                title="${stat} - Used by ${usersCount} character(s)" ${isUnused ? 'disabled' : ''}>
+            <img class="stat-icon" src="images/stat-icon/${slugify(stat)}.webp" alt="${stat} icon">
+            <span class="stat-name">${stat}</span>
+            <span class="stat-count">${usersCount}</span>
+        </button>`;
+    }).join('');
 
-    // Update global previousPageInfo for potential saving on navigation away from this page
-    previousPageInfo = {
-      type: 'relicSet',
-      slug: setSlug,
-      filters: {
-        selectedMainStats,
-        selectedSubStats,
-        requiredSubstatCount
-      }
-    };
+    const mainStatPieces = isOrnament ? ["SPHERE", "ROPE"] : ["BODY", "FEET"];
+    const mainStatsFilterHtml = mainStatPieces.map(piece => `
+      <div class="filter-piece-group" data-piece-type="${piece}">
+        <h5>${piece.charAt(0) + piece.slice(1).toLowerCase()}</h5>
+        <div class="stat-options-grid">${renderStatOptions(MAIN_STATS_SCHEMA[piece], 'main', piece)}</div>
+      </div>`).join('');
 
-    // Determine which pieces are configurable for main stats (ornaments: Sphere/Rope; relics: Body/Feet)
-    const displayablePieceOrder = isActualOrnament ? ["SPHERE", "ROPE"] : ["BODY", "FEET"];
-    let mainStatsFilterHtml = '';
-
-    displayablePieceOrder.forEach(piece => {
-      const possibleMainStats = MAIN_STATS_SCHEMA[piece];
-      // Head and Hands have fixed main stats, so they are not included here
-      if (possibleMainStats && possibleMainStats.length > 0) {
-        mainStatsFilterHtml += `<div class="filter-piece-group" data-piece-type="${piece}">
-                <h5>${piece.charAt(0) + piece.slice(1).toLowerCase()}</h5>
-                <div class="stat-options-grid">`;
-        possibleMainStats.forEach(stat => {
-          const usersCount = charactersUsingSet.filter(char => {
-            const charPieceStats = getCharacterPieceStats(char, piece);
-            return charPieceStats.includes(stat);
-          }).length;
-          const isUnused = usersCount === 0;
-          const isActive = selectedMainStats[piece]?.includes(stat);
-          mainStatsFilterHtml += `
-                    <button class="stat-option main-stat-option ${isUnused ? 'unused-stat' : ''} ${isActive ? 'active' : ''}" 
-                            data-stat-type="main" data-piece="${piece}" data-value="${stat}" 
-                            title="${stat} - Used by ${usersCount} character(s) with this set"
-                            ${isUnused ? 'disabled' : ''}>
-                        <img class="stat-icon" src="images/stat-icon/${slugify(stat)}.webp" alt="${stat} icon">
-                        <span class="stat-name">${stat}</span>
-                        <span class="stat-count">${usersCount}</span>
-                    </button>`;
-        });
-        mainStatsFilterHtml += `</div></div>`;
-      }
-    });
-    if (!mainStatsFilterHtml) mainStatsFilterHtml = "<p>No configurable main stats for this set type.</p>";
-
-    let subStatsFilterHtml = '<div class="stat-options-grid">';
-    SUBSTATS_CANONICAL.forEach(substat => {
-      const usersCount = charactersUsingSet.filter(char => char.substatsClean.includes(substat)).length;
-      const isUnused = usersCount === 0;
-      const isActive = selectedSubStats.includes(substat);
-      subStatsFilterHtml += `
-            <button class="stat-option sub-stat-option ${isUnused ? 'unused-stat' : ''} ${isActive ? 'active' : ''}" 
-                    data-stat-type="sub" data-value="${substat}"
-                    title="${substat} - Prioritized by ${usersCount} character(s) with this set"
-                    ${isUnused ? 'disabled' : ''}>
-                <img class="stat-icon" src="images/stat-icon/${slugify(substat)}.webp" alt="${substat} icon">
-                <span class="stat-name">${substat}</span>
-                <span class="stat-count">${usersCount}</span>
-            </button>`;
-    });
-    subStatsFilterHtml += '</div>';
-
+    const subStatsFilterHtml = `<div class="stat-options-grid">${renderStatOptions(SUBSTATS_CANONICAL, 'sub')}</div>`;
+    
     appContent.innerHTML = `
       <div class="page-container">
-          <div class="page-header">
-               <div class="page-title-with-icon">
-                  <img src="images/relic/${slugify(setName)}.webp" alt="${setName}" class="page-main-icon">
-                  <h2>${setName}</h2>
-              </div>
-          </div>
+          <div class="page-header"><div class="page-title-with-icon"><img src="images/relic/${slugify(setName)}.webp" alt="${setName}" class="page-main-icon"><h2>${setName}</h2></div></div>
           ${setInfoHtml}
           <div class="relic-interactive-filter-area">
               <h3>Stat Usage Analysis</h3>
-              <p>Select main stats and substats to find characters who benefit from this set with those stats. Stats with 0 are not used by any character with this set.</p>
-              
+              <p>Select stats to find characters who benefit from this set with those stats. Stats with 0 are not used by any character with this set.</p>
               <div class="filter-controls-panel">
-                  <div class="filter-section">
-                      <div class="filter-section-header">
-                          <h4>Main Stats</h4>
-                          <button class="collapse-toggle-btn" aria-expanded="true" aria-controls="main-stats-content">▼</button>
-                      </div>
-                      <div class="filter-section-content" id="main-stats-content">
-                          ${mainStatsFilterHtml}
-                      </div>
-                  </div>
-
-                  <div class="filter-section">
-                      <div class="filter-section-header">
-                          <h4>Substats</h4>
-                           <button class="collapse-toggle-btn" aria-expanded="true" aria-controls="sub-stats-content">▼</button>
-                      </div>
-                      <div class="filter-section-content" id="sub-stats-content">
-                          <!-- MODIFIED: Replaced radio buttons with stepper -->
-                          <div class="substats-logic-toggle">
-                              <span>Match at least</span>
-                              <div class="substat-count-selector">
-                                  <button class="stepper-btn" data-step="-1" disabled>-</button>
-                                  <span class="stepper-value">1</span>
-                                  <button class="stepper-btn" data-step="1">+</button>
-                              </div>
-                              <span>of the selected substats</span>
-                          </div>
-                          ${subStatsFilterHtml}
-                      </div>
-                  </div>
+                  <div class="filter-section"><div class="filter-section-header"><h4>Main Stats</h4><button class="collapse-toggle-btn" aria-expanded="true" aria-controls="main-stats-content">▼</button></div><div class="filter-section-content" id="main-stats-content">${mainStatsFilterHtml}</div></div>
+                  <div class="filter-section"><div class="filter-section-header"><h4>Substats</h4><button class="collapse-toggle-btn" aria-expanded="true" aria-controls="sub-stats-content">▼</button></div><div class="filter-section-content" id="sub-stats-content"><div class="substats-logic-toggle"><span>Match at least</span><div class="substat-count-selector"><button class="stepper-btn" data-step="-1" disabled>-</button><span class="stepper-value">1</span><button class="stepper-btn" data-step="1">+</button></div><span>of the selected substats</span></div>${subStatsFilterHtml}</div></div>
                   <button id="reset-filters-btn" class="filter-button">Reset Filters</button>
               </div>
-
               <div class="filtered-results-section">
-                  <div class="filtered-results-header">
-                    <h4 id="character-count-display"></h4>
-                    <button id="character-filter-toggle" class="link-button">Filter Characters ▼</button>
-                  </div>
-                  <!-- NEW: Container for character filters -->
-                  <div id="relic-page-character-filter-container" style="display: none;">
-                    ${_renderCharacterFilterBar('relic-page-character-filter-bar')}
-                  </div>
-                  <div id="filtered-character-list-container" class="item-list-scroll-container character-list">
-                      ${/* Initial rendering will be handled by applyFiltersAndRenderResults */''}
-                  </div>
+                  <div class="filtered-results-header"><h4 id="character-count-display"></h4><button id="character-filter-toggle" class="link-button">Filter Characters ▼</button></div>
+                  <div id="relic-page-character-filter-container" style="display: none;">${_renderCharacterFilterBar('relic-page-character-filter-bar')}</div>
+                  <div id="filtered-character-list-container" class="item-list-scroll-container character-list"></div>
                   <p id="no-filtered-results-message" style="display:none;">No characters match the selected criteria for this set.</p>
               </div>
           </div>
       </div>`;
-
+      
     const characterListContainer = document.getElementById('filtered-character-list-container');
     const characterCountDisplay = document.getElementById('character-count-display');
     const noResultsMessage = document.getElementById('no-filtered-results-message');
     const filterArea = appContent.querySelector('.relic-interactive-filter-area');
     const substatStepper = filterArea.querySelector('.substat-count-selector');
 
-    function updateCurrentFilterStateForPersistence() {
-      // Ensure filters are saved for the current page context
-      if (previousPageInfo.type === 'relicSet' && previousPageInfo.slug === setSlug) {
-        previousPageInfo.filters = {
-          selectedMainStats,
-          selectedSubStats,
-          requiredSubstatCount
-        };
-      }
-    }
-    
-    function updateStepperState() {
-        if (!substatStepper) return;
+    const updateStepperState = () => {
         const valueSpan = substatStepper.querySelector('.stepper-value');
-        const minusBtn = substatStepper.querySelector('[data-step="-1"]');
-        const plusBtn = substatStepper.querySelector('[data-step="1"]');
-        
+        const [minusBtn, plusBtn] = substatStepper.querySelectorAll('.stepper-btn');
         const min = 1;
         const max = Math.max(1, Math.min(4, selectedSubStats.length));
-        
-        if (requiredSubstatCount > max) {
-            requiredSubstatCount = max;
-        }
-
+        if (requiredSubstatCount > max) requiredSubstatCount = max;
         valueSpan.textContent = requiredSubstatCount;
         minusBtn.disabled = requiredSubstatCount <= min;
         plusBtn.disabled = requiredSubstatCount >= max;
-    }
+    };
+    
+    const applyFiltersAndRenderResults = () => {
+        let filteredCharacters = [...charactersUsingSet];
 
-    function applyFiltersAndRenderResults() {
-      let filteredCharacters = [...charactersUsingSet];
-
-      // Filter by selected Main Stats
-      const activeMainStatPieces = Object.keys(selectedMainStats).filter(piece => selectedMainStats[piece].length > 0);
-      if (activeMainStatPieces.length > 0) {
-        filteredCharacters = filteredCharacters.filter(char => {
-          return activeMainStatPieces.every(pieceType => { // Character must match criteria for ALL pieces with selected main stats
-            const charPieceStats = getCharacterPieceStats(char, pieceType);
-            if (!charPieceStats || charPieceStats.length === 0) return false;
-            // Character must have at least ONE of the selected main stats for this piece type
-            return selectedMainStats[pieceType].some(selStat => charPieceStats.includes(selStat));
-          });
-        });
-      }
-
-      // --- MODIFIED: Filter by selected Substats using the stepper value ---
-      if (selectedSubStats.length > 0) {
-        filteredCharacters = filteredCharacters.filter(char => {
-            const matchCount = selectedSubStats.filter(sub => char.substatsClean.includes(sub)).length;
-            return matchCount >= requiredSubstatCount;
-        });
-      }
-      
-      // --- NEW: Apply global character filters ---
-      const finalFilteredCharacters = applyCharacterFilters(filteredCharacters);
-
-      characterCountDisplay.textContent = `Showing ${finalFilteredCharacters.length} of ${charactersUsingSet.length} character(s) for this set`;
-
-      if (finalFilteredCharacters.length > 0) {
-        characterListContainer.innerHTML = _renderItemsList(finalFilteredCharacters, "character", "Matching Characters", "character-list-icon");
-        noResultsMessage.style.display = 'none';
-        characterListContainer.style.display = '';
-      } else {
-        characterListContainer.innerHTML = '';
-        noResultsMessage.style.display = 'block';
-        characterListContainer.style.display = 'none';
-      }
-      updateCurrentFilterStateForPersistence(); // Update state for persistence on navigation
-    }
-
-    // Event delegation for filter controls
-    filterArea.addEventListener('click', (event) => {
-      const statButton = event.target.closest('button.stat-option:not(:disabled)');
-      const resetBtn = event.target.closest('#reset-filters-btn');
-      const filterHeader = event.target.closest('.filter-section-header');
-      const collapseToggleBtn = filterHeader ? filterHeader.querySelector('.collapse-toggle-btn') : event.target.closest('.collapse-toggle-btn');
-      const stepperBtn = event.target.closest('.stepper-btn:not(:disabled)');
-      const charFilterToggleBtn = event.target.closest('#character-filter-toggle');
-      const charFilterBar = document.getElementById('relic-page-character-filter-bar');
-      const charFilterBtn = charFilterBar ? event.target.closest('.filter-option') : null;
-      const charFilterResetBtn = charFilterBar ? event.target.closest('.filter-reset-btn') : null;
-
-      if (statButton) {
-        statButton.classList.toggle('active');
-        const statType = statButton.dataset.statType;
-        const value = statButton.dataset.value;
-
-        if (statType === 'main') {
-          const piece = statButton.dataset.piece;
-          if (!selectedMainStats[piece]) selectedMainStats[piece] = [];
-
-          if (statButton.classList.contains('active')) {
-            if (!selectedMainStats[piece].includes(value)) selectedMainStats[piece].push(value);
-          } else {
-            selectedMainStats[piece] = selectedMainStats[piece].filter(s => s !== value);
-          }
-        } else if (statType === 'sub') {
-          if (statButton.classList.contains('active')) {
-            if (!selectedSubStats.includes(value)) selectedSubStats.push(value);
-          } else {
-            selectedSubStats = selectedSubStats.filter(s => s !== value);
-          }
-          updateStepperState(); // Update stepper state when substat selection changes
+        // Filter by selected Main Stats
+        const activeMainStatPieces = Object.keys(selectedMainStats).filter(piece => selectedMainStats[piece].length > 0);
+        if (activeMainStatPieces.length > 0) {
+            filteredCharacters = filteredCharacters.filter(char => {
+                return activeMainStatPieces.every(pieceType => {
+                    const charPieceStats = getCharacterPieceStats(char, pieceType);
+                    if (!charPieceStats || charPieceStats.length === 0) return false;
+                    return selectedMainStats[pieceType].some(selStat => charPieceStats.includes(selStat));
+                });
+            });
         }
-        applyFiltersAndRenderResults();
+
+        // Filter by selected Substats
+        if (selectedSubStats.length > 0) {
+            filteredCharacters = filteredCharacters.filter(char => {
+                const charNeededSubstats = char.substatsClean;
+                if (charNeededSubstats.length === 0) return false;
+
+                const matchCount = charNeededSubstats.filter(sub => selectedSubStats.includes(sub)).length;
+
+                // If a character needs fewer substats than the filter requires,
+                // they are a match only if ALL of their needed substats are selected.
+                if (charNeededSubstats.length < requiredSubstatCount) {
+                    return matchCount === charNeededSubstats.length;
+                }
+
+                // Otherwise, the standard logic applies: the number of matches must meet the requirement.
+                return matchCount >= requiredSubstatCount;
+            });
+        }
+      
+        // Apply global character attribute filters
+        const finalFilteredCharacters = applyCharacterFilters(filteredCharacters);
+
+        characterCountDisplay.textContent = `Showing ${finalFilteredCharacters.length} of ${charactersUsingSet.length} character(s) for this set`;
+        
+        const hasResults = finalFilteredCharacters.length > 0;
+        if (hasResults) {
+            characterListContainer.innerHTML = _renderItemsList(finalFilteredCharacters, "character", "Matching Characters", "character-list-icon");
+            noResultsMessage.style.display = 'none';
+            characterListContainer.style.display = '';
+        } else {
+            characterListContainer.innerHTML = '';
+            noResultsMessage.style.display = 'block';
+            characterListContainer.style.display = 'none';
+        }
+        
+        // Update state for persistence on navigation
+        if (previousPageInfo.type === 'relicSet') {
+          previousPageInfo.filters = { selectedMainStats, selectedSubStats, requiredSubstatCount };
+        }
+    };
+
+    filterArea.addEventListener('click', e => {
+      const target = e.target;
+      let needsRender = false;
+
+      const statBtn = target.closest('button.stat-option:not(:disabled)');
+      const resetBtn = target.closest('#reset-filters-btn');
+      const collapseToggleBtn = target.closest('.collapse-toggle-btn');
+      const stepperBtn = target.closest('.stepper-btn:not(:disabled)');
+      const charFilterToggleBtn = target.closest('#character-filter-toggle');
+      const charFilterBtn = target.closest('#relic-page-character-filter-bar .filter-option');
+      const charFilterResetBtn = target.closest('#relic-page-character-filter-bar .filter-reset-btn');
+
+      if (statBtn) {
+          statBtn.classList.toggle('active');
+          const { statType, value, piece } = statBtn.dataset;
+          const set = (statType === 'main') ? new Set(selectedMainStats[piece]) : new Set(selectedSubStats);
+          
+          set.has(value) ? set.delete(value) : set.add(value);
+
+          if (statType === 'main') {
+              selectedMainStats[piece] = Array.from(set);
+          } else {
+              selectedSubStats = Array.from(set);
+              updateStepperState();
+          }
+          needsRender = true;
       } else if (resetBtn) {
-        selectedMainStats = { BODY: [], FEET: [], SPHERE: [], ROPE: [] };
-        selectedSubStats = [];
-        requiredSubstatCount = 1;
-        filterArea.querySelectorAll('button.stat-option.active').forEach(btn => btn.classList.remove('active'));
-        updateStepperState();
-
-        // Reset collapse states to expanded
-        filterArea.querySelectorAll('.collapse-toggle-btn').forEach(btn => {
-          const contentId = btn.getAttribute('aria-controls');
-          const contentElement = document.getElementById(contentId);
-          btn.setAttribute('aria-expanded', 'true');
-          if (contentElement) contentElement.style.display = '';
-          btn.textContent = '▼';
-        });
-
-        applyFiltersAndRenderResults();
+          selectedMainStats = { BODY: [], FEET: [], SPHERE: [], ROPE: [] };
+          selectedSubStats = [];
+          requiredSubstatCount = 1;
+          filterArea.querySelectorAll('button.stat-option.active').forEach(btn => btn.classList.remove('active'));
+          updateStepperState();
+          needsRender = true;
       } else if (collapseToggleBtn) {
-        const contentId = collapseToggleBtn.getAttribute('aria-controls');
-        const contentElement = document.getElementById(contentId);
-        const isExpanded = collapseToggleBtn.getAttribute('aria-expanded') === 'true';
-
-        collapseToggleBtn.setAttribute('aria-expanded', String(!isExpanded));
-        if (contentElement) contentElement.style.display = isExpanded ? 'none' : '';
-        collapseToggleBtn.textContent = isExpanded ? '▶' : '▼'; // Toggle icon
+          const content = document.getElementById(collapseToggleBtn.getAttribute('aria-controls'));
+          const isExpanded = collapseToggleBtn.getAttribute('aria-expanded') === 'true';
+          collapseToggleBtn.setAttribute('aria-expanded', !isExpanded);
+          content.style.display = isExpanded ? 'none' : '';
+          collapseToggleBtn.textContent = isExpanded ? '▶' : '▼';
       } else if (stepperBtn) {
-        const step = parseInt(stepperBtn.dataset.step, 10);
-        requiredSubstatCount += step;
-        updateStepperState();
-        applyFiltersAndRenderResults();
+          requiredSubstatCount += parseInt(stepperBtn.dataset.step, 10);
+          updateStepperState();
+          needsRender = true;
       } else if (charFilterToggleBtn) {
           const container = document.getElementById('relic-page-character-filter-container');
           const isHidden = container.style.display === 'none';
@@ -1006,6 +679,7 @@
       } else if (charFilterBtn) {
           const type = charFilterBtn.parentElement.dataset.filterType;
           const value = charFilterBtn.dataset.filterValue;
+
           if (characterListFilters[type].has(value)) {
               characterListFilters[type].delete(value);
               charFilterBtn.classList.remove('active');
@@ -1013,64 +687,54 @@
               characterListFilters[type].add(value);
               charFilterBtn.classList.add('active');
           }
-          applyFiltersAndRenderResults();
+          needsRender = true;
       } else if (charFilterResetBtn) {
-          Object.keys(characterListFilters).forEach(key => characterListFilters[key].clear());
-          charFilterBar.querySelectorAll('.filter-option.active').forEach(btn => btn.classList.remove('active'));
-          applyFiltersAndRenderResults();
+          Object.values(characterListFilters).forEach(set => set.clear());
+          document.querySelectorAll('#relic-page-character-filter-bar .filter-option.active').forEach(b => b.classList.remove('active'));
+          needsRender = true;
+      }
+      
+      if (needsRender) {
+        applyFiltersAndRenderResults();
       }
     });
 
-    // Initial application of filters & results rendering
+    // Initial render
     updateStepperState();
     applyFiltersAndRenderResults();
   }
 
+
   // --- Search Popup Logic ---
   function openSearchPopup() {
     searchPopup.style.display = "flex";
-    // universalSearchInput.value = lastUniversalSearchQueryValue; // Restore previous query for this session
-    universalSearchInput.value = ""; // Clear previous search query
+    universalSearchInput.value = "";
     universalSearchInput.focus();
-    document.body.style.overflow = "hidden"; // Prevent background scrolling
-    handleUniversalSearch(); // Populate results if there was a previous query
-    currentSearchFocusIndex = -1; // Reset focus
-    removeSearchItemFocus();
+    document.body.style.overflow = "hidden";
+    handleUniversalSearch();
+    currentSearchFocusIndex = -1;
   }
 
   function closeSearchPopup() {
     searchPopup.style.display = "none";
-    universalSearchResults.innerHTML = '<p class="search-prompt">Type to start searching.</p>';
-    document.body.style.overflow = ""; // Restore scrolling
+    document.body.style.overflow = "";
     currentSearchFocusIndex = -1;
-    searchableListItems = []; // Clear list items
-  }
-
-  function removeSearchItemFocus() {
-    searchableListItems.forEach((item) => item.classList.remove("focused-search-item"));
-  }
-
-  function addSearchItemFocus(index) {
-    removeSearchItemFocus();
-    if (searchableListItems[index]) {
-      searchableListItems[index].classList.add("focused-search-item");
-      // Scroll the focused item into view if not fully visible
-      searchableListItems[index].scrollIntoView({
-        block: "nearest",
-        inline: "nearest"
-      });
-      currentSearchFocusIndex = index;
-    }
   }
   
-  // --- MODIFIED: Search now uses character objects and searches displayName ---
-  function handleUniversalSearch() {
-    const currentInputValue = universalSearchInput.value;
-    lastUniversalSearchQueryValue = currentInputValue; // Remember for session
-    const query = currentInputValue.trim().toLowerCase();
+  function updateSearchItemFocus(newIndex) {
+      if (searchableListItems.length === 0) return;
+      if (currentSearchFocusIndex > -1) {
+          searchableListItems[currentSearchFocusIndex].classList.remove("focused-search-item");
+      }
+      currentSearchFocusIndex = newIndex;
+      const item = searchableListItems[currentSearchFocusIndex];
+      item.classList.add("focused-search-item");
+      item.scrollIntoView({ block: "nearest" });
+  }
 
-    currentSearchFocusIndex = -1; // Reset focus on new search
-    removeSearchItemFocus();
+  function handleUniversalSearch() {
+    const query = universalSearchInput.value.trim().toLowerCase();
+    currentSearchFocusIndex = -1;
 
     if (!query) {
       universalSearchResults.innerHTML = '<p class="search-prompt">Type to start searching.</p>';
@@ -1078,114 +742,76 @@
       return;
     }
 
-    let html = "";
-    const matchingRelics = RELIC_SETS_DATA
-      .filter((name) => name.toLowerCase().includes(query))
-      .sort((a, b) => a.localeCompare(b)); // Sort alphabetically
-    if (matchingRelics.length > 0) {
-      html += '<h3>Cavern Relics</h3><ul class="search-results-list">';
-      matchingRelics.forEach((name) => {
-        const slug = slugify(name);
-        html += `<li><a href="#/relics/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon">${name}</a></li>`;
-      });
-      html += "</ul>";
-    }
+    const createResultList = (title, items, type) => {
+        if (items.length === 0) return '';
+        const listItems = items.map(item => {
+            const name = type === 'character' ? item.displayName : item;
+            const slug = slugify(type === 'character' ? item.name : item);
+            const itemType = type === 'ornament' ? 'ornaments' : `${type}s`;
+            const iconPath = type === 'character' ? `character/${slug}` : `relic/${slug}`;
+            return `<li><a href="#/${itemType}/${slug}"><img src="images/${iconPath}.webp" alt="" class="item-icon search-result-icon">${name}</a></li>`;
+        }).join('');
+        return `<h3>${title}</h3><ul class="search-results-list">${listItems}</ul>`;
+    };
 
-    const matchingOrnaments = ORNAMENT_SETS_DATA
-      .filter((name) => name.toLowerCase().includes(query))
-      .sort((a, b) => a.localeCompare(b));
-    if (matchingOrnaments.length > 0) {
-      html += '<h3>Planar Ornaments</h3><ul class="search-results-list">';
-      matchingOrnaments.forEach((name) => {
-        const slug = slugify(name);
-        html += `<li><a href="#/ornaments/${slug}"><img src="images/relic/${slug}.webp" alt="" class="item-icon search-result-icon">${name}</a></li>`;
-      });
-      html += "</ul>";
-    }
+    const matchingRelics = RELIC_SETS_DATA.filter(name => name.toLowerCase().includes(query)).sort();
+    const matchingOrnaments = ORNAMENT_SETS_DATA.filter(name => name.toLowerCase().includes(query)).sort();
+    const matchingCharacters = characterBuilds.filter(c => c.name.toLowerCase().includes(query) || c.displayName.toLowerCase().includes(query)).sort((a,b) => a.displayName.localeCompare(b.displayName));
 
-    const matchingCharacters = characterBuilds
-      .filter((c) => c.name.toLowerCase().includes(query) || c.displayName.toLowerCase().includes(query))
-      .sort((a, b) => a.displayName.localeCompare(b.displayName));
-    if (matchingCharacters.length > 0) {
-      html += '<h3>Characters</h3><ul class="search-results-list">';
-      matchingCharacters.forEach((char) => {
-        const slug = slugify(char.name);
-        html += `<li><a href="#/characters/${slug}"><img src="images/character/${slug}.webp" alt="" class="item-icon search-result-icon">${char.displayName}</a></li>`;
-      });
-      html += "</ul>";
-    }
+    let html = createResultList('Cavern Relics', matchingRelics, 'relic') +
+               createResultList('Planar Ornaments', matchingOrnaments, 'ornament') +
+               createResultList('Characters', matchingCharacters, 'character');
 
     if (!html) {
       universalSearchResults.innerHTML = '<p class="search-prompt">No results found.</p>';
       searchableListItems = [];
     } else {
       universalSearchResults.innerHTML = html;
-      // Update the list of items that can be navigated with arrow keys
       searchableListItems = Array.from(universalSearchResults.querySelectorAll(".search-results-list li"));
+      universalSearchResults.querySelectorAll("a").forEach(link => link.addEventListener("click", closeSearchPopup));
     }
-
-    // Add click listeners to new links to close popup on navigation
-    universalSearchResults.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", closeSearchPopup);
-    });
   }
+
 
   // --- Navigation and Routing ---
   function updateActiveNav(currentHash) {
-    const navLinks = mainNav.querySelectorAll("a, button");
-    navLinks.forEach((link) => link.classList.remove("active"));
-
-    let activeLink;
-    // Determine active link based on hash, ensuring it's a list page, not a detail page
-    if (currentHash.startsWith("#/relics") && !currentHash.includes("/", "#/relics".length + 1)) {
-      activeLink = mainNav.querySelector('a[data-nav-path="/relics"]');
-    } else if (currentHash.startsWith("#/ornaments") && !currentHash.includes("/", "#/ornaments".length + 1)) {
-      activeLink = mainNav.querySelector('a[data-nav-path="/ornaments"]');
-    } else if (currentHash.startsWith("#/characters") && !currentHash.includes("/", "#/characters".length + 1)) {
-      activeLink = mainNav.querySelector('a[data-nav-path="/characters"]');
-    } else if (currentHash === "#/" || currentHash === "") { // Home page
-      activeLink = mainNav.querySelector('a[data-nav-path="/"]');
-    }
-    // If no specific list page match, no main nav item will be active (e.g., on detail pages)
-    if (activeLink) activeLink.classList.add("active");
+    mainNav.querySelectorAll("a.active, button.active").forEach(el => el.classList.remove("active"));
+    const path = currentHash.split('/')[1] || ''; // #/relics/slug -> relics
+    const navItem = mainNav.querySelector(`a[data-nav-path="/${path}"]`);
+    if(navItem) navItem.classList.add("active");
   }
 
   function handleRouteChange() {
-    // Save filter state of the previous relic set page before navigating away
+    // Persist filter state of the previous relic set page before navigating away
     if (previousPageInfo.type === 'relicSet' && previousPageInfo.slug && previousPageInfo.filters) {
-      const cacheKey = `relicFilterState_${previousPageInfo.slug}`;
-      try {
-        sessionStorage.setItem(cacheKey, JSON.stringify(previousPageInfo.filters));
-      } catch (e) {
-        console.error("Error saving filters to sessionStorage:", e);
-      }
+      sessionStorage.setItem(`relicFilterState_${previousPageInfo.slug}`, JSON.stringify(previousPageInfo.filters));
     }
 
-    const hash = location.hash;
-    const loadingContainer = document.querySelector(".loading-container");
-    if (loadingContainer) loadingContainer.style.display = "none"; // Hide loading once routing starts
+    const hash = location.hash || "#/";
+    document.querySelector(".loading-container")?.remove(); // Hide loading indicator
 
-    // Simple hash-based router
-    if (hash === "#/relics") renderCavernRelicsPage();
-    else if (hash === "#/ornaments") renderPlanarOrnamentsPage();
-    else if (hash === "#/characters") renderCharactersListPage();
-    else if (hash.startsWith("#/characters/")) {
+    const routes = {
+      "#/relics": renderCavernRelicsPage,
+      "#/ornaments": renderPlanarOrnamentsPage,
+      "#/characters": renderCharactersListPage,
+    };
+    
+    if (routes[hash]) {
+      routes[hash]();
+    } else if (hash.startsWith("#/characters/")) {
       const charSlug = hash.substring("#/characters/".length);
-      // Find character name by slug (which is based on the original `name` field)
       const character = characterBuilds.find(c => slugify(c.name) === charSlug);
-      const charName = character ? character.name : deslugify(charSlug);
-      renderCharacterPage(charName);
+      renderCharacterPage(character ? character.name : deslugify(charSlug));
     } else if (hash.startsWith("#/ornaments/")) {
-      const ornamentSlug = hash.substring("#/ornaments/".length);
-      renderRelicSetPage(ornamentSlug);
+      renderRelicSetPage(hash.substring("#/ornaments/".length));
     } else if (hash.startsWith("#/relics/")) {
-      const relicSlug = hash.substring("#/relics/".length);
-      renderRelicSetPage(relicSlug);
-    } else { // Default to home page
+      renderRelicSetPage(hash.substring("#/relics/".length));
+    } else {
       renderHomePage();
     }
-    updateActiveNav(hash);
-    window.scrollTo(0, 0); // Scroll to top on page change
+    
+    updateActiveNav(location.hash);
+    window.scrollTo(0, 0);
   }
 
   // --- Application Initialization ---
@@ -1194,153 +820,95 @@
       const [buildDataResponse, relicInfoResponse] = await Promise.all([
         fetch(BUILD_DATA_URL), fetch(RELIC_INFO_URL),
       ]);
-
-      if (!buildDataResponse.ok) throw new Error(`HTTP error ${buildDataResponse.status} fetching character builds.`);
-      if (!relicInfoResponse.ok) throw new Error(`HTTP error ${relicInfoResponse.status} fetching relic info.`);
-
+      if (!buildDataResponse.ok || !relicInfoResponse.ok) throw new Error(`HTTP error fetching data.`);
+      
       const rawBuildData = await buildDataResponse.json();
-      relicSetDetailsData = await relicInfoResponse.json(); // Store raw relic details
+      relicSetDetailsData = await relicInfoResponse.json();
 
-      // Populate RELIC_SETS_DATA, ORNAMENT_SETS_DATA, and RELIC_GROUP_MAP from relicSetDetailsData
       const relicIdLookup = new Map(relicSetDetailsData.map(item => [item.Name, item.ID]));
-      const tempRelicSets = new Set(),
-            tempOrnamentSets = new Set();
-
-      relicSetDetailsData.forEach((item) => {
-        if (item.Name && typeof item.Name === "string") {
-          if (item.Type === "Relic Set") tempRelicSets.add(item.Name);
-          else if (item.Type === "Planetary Ornament Set") tempOrnamentSets.add(item.Name);
-
-          // Populate RELIC_GROUP_MAP
-          if (item.Group && typeof item.Group === 'string') {
-            const groupNames = item.Group.split(',').map(g => g.trim()).filter(g => g); // Get individual group names
-            groupNames.forEach(groupName => {
-              if (!RELIC_GROUP_MAP.has(groupName)) {
-                RELIC_GROUP_MAP.set(groupName, new Set());
-              }
-              RELIC_GROUP_MAP.get(groupName).add(item.Name);
-            });
-          }
+      const tempRelicSets = new Set(), tempOrnamentSets = new Set();
+      
+      relicSetDetailsData.forEach(item => {
+        if (!item.Name) return;
+        if (item.Type === "Relic Set") tempRelicSets.add(item.Name);
+        else if (item.Type === "Planetary Ornament Set") tempOrnamentSets.add(item.Name);
+        
+        if (item.Group) {
+          item.Group.split(',').map(g => g.trim()).filter(Boolean).forEach(groupName => {
+            if (!RELIC_GROUP_MAP.has(groupName)) RELIC_GROUP_MAP.set(groupName, new Set());
+            RELIC_GROUP_MAP.get(groupName).add(item.Name);
+          });
         }
       });
-      // Sort by ID descending (newer sets first)
-      RELIC_SETS_DATA = Array.from(tempRelicSets).sort((a, b) => (relicIdLookup.get(b) || 0) - (relicIdLookup.get(a) || 0));
-      ORNAMENT_SETS_DATA = Array.from(tempOrnamentSets).sort((a, b) => (relicIdLookup.get(b) || 0) - (relicIdLookup.get(a) || 0));
-
-      // Create a combined list of all set names, sorted by length for parsing
-      // This list should still only contain actual set names, not "Group:XXX"
+      
+      const sortByIdDesc = (a, b) => (relicIdLookup.get(b) || 0) - (relicIdLookup.get(a) || 0);
+      RELIC_SETS_DATA = Array.from(tempRelicSets).sort(sortByIdDesc);
+      ORNAMENT_SETS_DATA = Array.from(tempOrnamentSets).sort(sortByIdDesc);
       ALL_KNOWN_SETS_SORTED = [...RELIC_SETS_DATA, ...ORNAMENT_SETS_DATA].sort((a, b) => b.length - a.length);
 
-      // Populate lookup maps for set names
       ALL_KNOWN_SETS_SORTED.forEach(set => {
         ALL_KNOWN_SETS_SLUG_MAP.set(slugify(set), set);
         ALL_KNOWN_SETS_NORMALIZED_MAP.set(set.toLowerCase().replace(/[^a-z0-9]/g, ""), set);
       });
 
-      processData(rawBuildData); // Process character build data
+      processData(rawBuildData);
 
-      // Sort characters by release version (desc) then ID (asc)
-      characterBuilds.sort((a, b) => {
-        if (b.Release !== a.Release) return (b.Release || 0) - (a.Release || 0);
-        return (a.ID || 0) - (b.ID || 0);
-      });
-      // REMOVED: allCharacters = characterBuilds.map((c) => c.name);
+      characterBuilds.sort((a, b) => (b.Release || 0) - (a.Release || 0) || (a.ID || 0) - (b.ID || 0));
 
-      // General click listener for delegated events (if any such elements exist)
-      // Note: .char-count-toggle is not used in current rendering functions but kept for compatibility
-      appContent.addEventListener("click", function(event) {
-        const toggleElement = event.target.closest(".char-count-toggle");
-        if (toggleElement && !toggleElement.classList.contains("no-users")) {
-          event.preventDefault();
-          const targetId = toggleElement.dataset.targetId;
-          const targetElement = document.getElementById(targetId);
-          if (targetElement) {
-            const isHidden = targetElement.style.display === "none" || !targetElement.style.display;
-            targetElement.style.display = isHidden ? "block" : "none";
-          }
-        }
-      });
-
-      // --- Search Popup Event Listeners ---
-      navSearchButton.addEventListener("click", openSearchPopup);
-      searchPopup.addEventListener("click", (event) => { // Close if backdrop is clicked
-        if (event.target === searchPopup) closeSearchPopup();
-      });
-      universalSearchInput.addEventListener("input", handleUniversalSearch);
-      universalSearchInput.addEventListener("focus", () => { // Reset focus index when input is focused
-        currentSearchFocusIndex = -1;
-        removeSearchItemFocus();
-      });
-      universalSearchClearBtn.addEventListener("click", () => {
-        if (universalSearchInput.value) { // If there's text, clear it and refocus
-          universalSearchInput.value = "";
-          lastUniversalSearchQueryValue = "";
-          handleUniversalSearch();
-          universalSearchInput.focus();
-        } else { // If already empty, close the popup
-          closeSearchPopup();
-        }
-      });
-
-      // --- Global Keyboard Shortcuts ---
-      document.addEventListener("keydown", (event) => {
-        if (searchPopup.style.display === "flex") { // Search popup is active
-          if (event.key === "Escape") closeSearchPopup();
-          else if (event.key === "ArrowDown" || (event.key === "Tab" && !event.shiftKey)) {
-            event.preventDefault();
-            if (searchableListItems.length > 0) {
-              currentSearchFocusIndex = (currentSearchFocusIndex + 1) % searchableListItems.length;
-              addSearchItemFocus(currentSearchFocusIndex);
-            }
-          } else if (event.key === "ArrowUp" || (event.key === "Tab" && event.shiftKey)) {
-            event.preventDefault();
-            if (searchableListItems.length > 0) {
-              if (currentSearchFocusIndex === -1) {
-                currentSearchFocusIndex = searchableListItems.length - 1;
-              } else {
-                currentSearchFocusIndex = (currentSearchFocusIndex - 1 + searchableListItems.length) % searchableListItems.length;
-              }
-              addSearchItemFocus(currentSearchFocusIndex);
-            }
-          } else if (event.key === "Enter") {
-            if (document.activeElement === universalSearchInput && currentSearchFocusIndex === -1) {
-              // If Enter is pressed in search input and no item is focused, click first result
-              if (searchableListItems.length > 0) {
-                event.preventDefault();
-                const firstResultLink = searchableListItems[0].querySelector("a");
-                if (firstResultLink) firstResultLink.click();
-              }
-            } else if (currentSearchFocusIndex !== -1 && searchableListItems[currentSearchFocusIndex]) {
-              // If an item is focused, click it
-              event.preventDefault();
-              const linkToClick = searchableListItems[currentSearchFocusIndex].querySelector("a");
-              if (linkToClick) linkToClick.click();
-            }
-          }
-        } else { // Search popup is not active
-          if (event.key === "/") { // Global shortcut to open search
-            const activeElement = document.activeElement;
-            const isTyping = activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA" || activeElement.isContentEditable);
-            if (!isTyping) { // Avoid hijacking typing in inputs
-              event.preventDefault();
-              openSearchPopup();
-            }
-          }
-        }
-      });
-
-      handleRouteChange(); // Initial route handling
+      setupEventListeners();
+      handleRouteChange();
     } catch (error) {
       console.error("Initialization failed:", error);
-      document.title = `Error - ${siteTitle}`;
-      appContent.innerHTML = `<div class="page-container"><p>Error loading application data. Details: ${error.message}</p></div>`;
-      const loadingContainer = document.querySelector(".loading-container");
-      if (loadingContainer) loadingContainer.style.display = "none";
+      document.title = `Error - ${SITE_TITLE}`;
+      appContent.innerHTML = `<div class="page-container"><p>Error loading application data: ${error.message}</p></div>`;
+      document.querySelector(".loading-container")?.remove();
     }
   }
 
-  // --- Event Listener for Hash Changes ---
-  window.addEventListener("hashchange", handleRouteChange);
+  function setupEventListeners() {
+    window.addEventListener("hashchange", handleRouteChange);
+
+    // Search Popup Listeners
+    navSearchButton.addEventListener("click", openSearchPopup);
+    searchPopup.addEventListener("click", e => { if (e.target === searchPopup) closeSearchPopup(); });
+    universalSearchInput.addEventListener("input", handleUniversalSearch);
+    universalSearchClearBtn.addEventListener("click", () => {
+        if (universalSearchInput.value) {
+          universalSearchInput.value = "";
+          handleUniversalSearch();
+          universalSearchInput.focus();
+        } else {
+          closeSearchPopup();
+        }
+    });
+
+    // Global Keyboard Shortcuts
+    document.addEventListener("keydown", e => {
+      const isSearchActive = searchPopup.style.display === "flex";
+      const activeElement = document.activeElement;
+      const isTyping = activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA");
+
+      if (isSearchActive) {
+        if (e.key === "Escape") closeSearchPopup();
+        else if (e.key === "ArrowDown") {
+          e.preventDefault();
+          const nextIndex = (currentSearchFocusIndex + 1) % searchableListItems.length;
+          updateSearchItemFocus(nextIndex);
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          const prevIndex = (currentSearchFocusIndex - 1 + searchableListItems.length) % searchableListItems.length;
+          updateSearchItemFocus(prevIndex);
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          const targetIndex = currentSearchFocusIndex === -1 ? 0 : currentSearchFocusIndex;
+          searchableListItems[targetIndex]?.querySelector("a")?.click();
+        }
+      } else if (e.key === "/" && !isTyping) {
+        e.preventDefault();
+        openSearchPopup();
+      }
+    });
+  }
 
   // --- Start the Application ---
   initApp();
