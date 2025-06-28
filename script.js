@@ -318,17 +318,18 @@
   }
 
   function _renderCharacterFilterBar(containerId = 'character-filter-bar') {
-    let filterHtml = `<div id="${containerId}" class="character-filter-bar">`;
+    let filterHtml = `<div id="${containerId}" class="character-filter-bar"><button class="filter-reset-btn" title="All characters"><img src="/images/icon/asterisk.svg"></button>`;
     for (const [type, config] of Object.entries(CHARACTER_FILTER_CONFIG)) {
         filterHtml += `<div class="filter-group" data-filter-type="${type}">`;
         config.options.forEach(value => {
             const isActive = characterListFilters[type].has(value);
             const iconSlug = type === 'rank' ? `rank-${value}` : slugify(value);
-            filterHtml += `<button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${value}"><img src="images/icon/filter/${iconSlug}.webp" alt="${value}"></button>`;
+            const title = type === 'rank' ? `${value} Stars` : value;
+            filterHtml += `<button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${title}"><img src="/images/icon/filter/${iconSlug}.webp" alt="${value}"></button>`;
         });
         filterHtml += `</div>`;
     }
-    filterHtml += `<button class="filter-reset-btn">Reset</button></div>`;
+    filterHtml += `</div>`;
     return filterHtml;
   }
   
@@ -544,7 +545,7 @@
               <div class="filter-controls-panel">
                   <div class="filter-section"><div class="filter-section-header"><h4>Main Stats</h4><button class="collapse-toggle-btn" aria-expanded="true" aria-controls="main-stats-content">▼</button></div><div class="filter-section-content" id="main-stats-content">${mainStatsFilterHtml}</div></div>
                   <div class="filter-section"><div class="filter-section-header"><h4>Substats</h4><button class="collapse-toggle-btn" aria-expanded="true" aria-controls="sub-stats-content">▼</button></div><div class="filter-section-content" id="sub-stats-content"><div class="substats-logic-toggle"><span>Match at least</span><div class="substat-count-selector"><button class="stepper-btn" data-step="-1" disabled>-</button><span class="stepper-value">1</span><button class="stepper-btn" data-step="1">+</button></div><span>of the selected substats</span></div>${subStatsFilterHtml}</div></div>
-                  <button id="reset-filters-btn" class="filter-button">Reset Filters</button>
+                  <button id="reset-filters-btn" class="filter-button">Reset Relic Filters</button>
               </div>
               <div class="filtered-results-section">
                   <div class="filtered-results-header"><h4 id="character-count-display"></h4><button id="character-filter-toggle" class="link-button">Filter Characters ▼</button></div>
