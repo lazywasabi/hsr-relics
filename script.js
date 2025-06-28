@@ -628,6 +628,15 @@
         }
     };
 
+    // Set initial state of the character filter dropdown
+    const charFilterContainer = document.getElementById('relic-page-character-filter-container');
+    const charFilterToggleBtn = document.getElementById('character-filter-toggle');
+    const areCharFiltersActive = Object.values(characterListFilters).some(set => set.size > 0);
+    if (areCharFiltersActive) {
+        charFilterContainer.style.display = 'block';
+        charFilterToggleBtn.textContent = 'Filter Characters ▲';
+    }
+
     filterArea.addEventListener('click', e => {
       const target = e.target;
       let needsRender = false;
