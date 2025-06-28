@@ -17,7 +17,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint if you play 134+ Acheron; with Sparkle, fully ignore Speed) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1308,
-    "Release": 211
+    "Release": 211,
+    "Rank": "5",
+    "Element": "Lightning",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Aglaea",
@@ -37,7 +41,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Desired Breakpoint) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1402,
-    "Release": 302
+    "Release": 302,
+    "Rank": "5",
+    "Element": "Lightning",
+    "Path": "Remembrance",
+    "Display Name": ""
   },
   {
     "Name": "Anaxa",
@@ -57,7 +65,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Desired Breakpoint) > CRIT RATE > CRIT DMG > ATK%",
     "ID": 1405,
-    "Release": 322
+    "Release": 322,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Archer",
@@ -77,7 +89,11 @@
     "Planetary5": "",
     "Substats": "Unknown",
     "ID": 1015,
-    "Release": 342
+    "Release": 342,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Argenti",
@@ -97,7 +113,11 @@
     "Planetary5": "",
     "Substats": "SPD (Breakpoint) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1302,
-    "Release": 152
+    "Release": 152,
+    "Rank": "5",
+    "Element": "Physical",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Arlan",
@@ -117,7 +137,11 @@
     "Planetary5": "",
     "Substats": "SPD (Breakpoint) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1008,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Lightning",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Asta",
@@ -137,7 +161,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until breakpoint) > HP = DEF > EFF RES% (30% If using Broken Keel)",
     "ID": 1009,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Fire",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Aventurine",
@@ -157,7 +185,11 @@
     "Planetary5": "",
     "Substats": "DEF% (aim for 4k) >= SPD > CRIT DMG > CRIT Rate > Effect RES",
     "ID": 1304,
-    "Release": 212
+    "Release": 212,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Preservation",
+    "Display Name": ""
   },
   {
     "Name": "Bailu",
@@ -177,7 +209,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > HP% > EFF RES% = DEF%",
     "ID": 1211,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Lightning",
+    "Path": "Abundance",
+    "Display Name": ""
   },
   {
     "Name": "Black Swan",
@@ -197,7 +233,11 @@
     "Planetary5": "",
     "Substats": "EHR (Until 100-120%) > SPD (Until breakpoint) > ATK% > Break Effect",
     "ID": 1307,
-    "Release": 201
+    "Release": 201,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Blade",
@@ -217,7 +257,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT RATE = CRIT DMG > HP%",
     "ID": 1205,
-    "Release": 121
+    "Release": 121,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Boothill",
@@ -237,7 +281,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until breakpoint OR if you got nothing else to stack) >= Break Effect",
     "ID": 1315,
-    "Release": 222
+    "Release": 222,
+    "Rank": "5",
+    "Element": "Physical",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Bronya",
@@ -257,7 +305,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until breakpoint) > CRIT DMG > HP = DEF > Effect RES% (30% If Keel)",
     "ID": 1101,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Castorice",
@@ -277,7 +329,11 @@
     "Planetary5": "Inert Salsotto",
     "Substats": "CRIT DMG = CRIT Rate > HP% > SPD (Less than 95)",
     "ID": 1407,
-    "Release": 321
+    "Release": 321,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "Remembrance",
+    "Display Name": ""
   },
   {
     "Name": "Cipher",
@@ -297,7 +353,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Desired Breakpoint) > EHR (If Desired) > CRIT RATE = CRIT DMG > ATK% or SPD (Until Desired Breakpoint) > EHR (If Desired) > HP% >= DEF%",
     "ID": 1406,
-    "Release": 332
+    "Release": 332,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Clara",
@@ -317,7 +377,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint if desired) = CRIT RATE = CRIT DMG > ATK%",
     "ID": 1107,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Physical",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Dan Heng",
@@ -337,7 +401,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = CRIT RATE = CRIT DMG > ATK%",
     "ID": 1002,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Wind",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Dan Heng - Imbibitor Lunae",
@@ -357,7 +425,11 @@
     "Planetary5": "",
     "Substats": "CRIT RATE = CRIT DMG > ATK%",
     "ID": 1213,
-    "Release": 131
+    "Release": 131,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Dr. Ratio",
@@ -377,7 +449,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1305,
-    "Release": 162
+    "Release": 162,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Feixiao",
@@ -397,7 +473,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Desired Breakpoint) = CRIT RATE = CRIT DMG > ATK%",
     "ID": 1220,
-    "Release": 251
+    "Release": 251,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Firefly",
@@ -417,7 +497,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Breakpoint) > Break Effect% > ATK%",
     "ID": 1310,
-    "Release": 231
+    "Release": 231,
+    "Rank": "5",
+    "Element": "Fire",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Fu Xuan",
@@ -437,7 +521,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = HP% >= DEF% > EFF RES%",
     "ID": 1208,
-    "Release": 132
+    "Release": 132,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "Preservation",
+    "Display Name": ""
   },
   {
     "Name": "Fugue",
@@ -457,7 +545,11 @@
     "Planetary5": "",
     "Substats": "Effect Hit Rate (Until 67%) > Break Effect (Until 220% or 250% For Iron Cavalry) > SPD > HP% = DEF%",
     "ID": 1225,
-    "Release": 272
+    "Release": 272,
+    "Rank": "5",
+    "Element": "Fire",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Gallagher",
@@ -477,7 +569,11 @@
     "Planetary5": "",
     "Substats": "SPD (as much as possible) > Break Effect % (up to 150%) > Effect RES% > HP% = DEF%",
     "ID": 1301,
-    "Release": 211
+    "Release": 211,
+    "Rank": "4",
+    "Element": "Fire",
+    "Path": "Abundance",
+    "Display Name": ""
   },
   {
     "Name": "Gepard",
@@ -497,7 +593,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = DEF% > HP% = EFF RES%",
     "ID": 1104,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Ice",
+    "Path": "Preservation",
+    "Display Name": ""
   },
   {
     "Name": "Guinaifen",
@@ -517,7 +617,11 @@
     "Planetary5": "",
     "Substats": "EHR (67%) > SPD (breakpoint) > ATK% > HP% = DEF% = Break Effect %",
     "ID": 1210,
-    "Release": 142
+    "Release": 142,
+    "Rank": "4",
+    "Element": "Fire",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Hanya",
@@ -537,7 +641,11 @@
     "Planetary5": "",
     "Substats": "SPD > HP = DEF > Break Effect = EFF RES% (30% If using Broken Keel)",
     "ID": 1215,
-    "Release": 152
+    "Release": 152,
+    "Rank": "4",
+    "Element": "Physical",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Herta",
@@ -557,7 +665,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = CRIT RATE = CRIT DMG > ATK%",
     "ID": 1013,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Ice",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Himeko",
@@ -577,7 +689,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = CRIT RATE = CRIT DMG > ATK%",
     "ID": 1003,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Fire",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Hook",
@@ -597,7 +713,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1109,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Fire",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Huohuo",
@@ -617,7 +737,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > HP% > EFF RES% = DEF%",
     "ID": 1217,
-    "Release": 151
+    "Release": 151,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "Abundance",
+    "Display Name": ""
   },
   {
     "Name": "Hyacine",
@@ -637,7 +761,11 @@
     "Planetary5": "",
     "Substats": "SPD to 200 or more > HP% > CRIT DMG >= Effect RES",
     "ID": 1409,
-    "Release": 331
+    "Release": 331,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "Remembrance",
+    "Display Name": ""
   },
   {
     "Name": "Jade",
@@ -657,7 +785,11 @@
     "Planetary5": "",
     "Substats": "CRIT RATE >= CRIT DMG > ATK% > SPD",
     "ID": 1314,
-    "Release": 232
+    "Release": 232,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Jiaoqiu",
@@ -677,7 +809,11 @@
     "Planetary5": "",
     "Substats": "EHR (Until 140%) > SPD > ATK%",
     "ID": 1218,
-    "Release": 242
+    "Release": 242,
+    "Rank": "5",
+    "Element": "Fire",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Jing Yuan",
@@ -697,7 +833,11 @@
     "Planetary5": "",
     "Substats": "Speed (Until breakpoint to make -1 Speed setup work) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1204,
-    "Release": 102
+    "Release": 102,
+    "Rank": "5",
+    "Element": "Lightning",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Jingliu",
@@ -717,7 +857,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT RATE (until 50%) = CRIT DMG > ATK%",
     "ID": 1212,
-    "Release": 141
+    "Release": 141,
+    "Rank": "5",
+    "Element": "Ice",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Kafka",
@@ -737,7 +881,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = EHR (Until Cap) >  ATK% > Break Effect",
     "ID": 1005,
-    "Release": 122
+    "Release": 122,
+    "Rank": "5",
+    "Element": "Lightning",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Lingsha",
@@ -757,7 +905,11 @@
     "Planetary5": "",
     "Substats": "SPD (until the desired breakpoint) > BREAK% >= ATK%",
     "ID": 1222,
-    "Release": 252
+    "Release": 252,
+    "Rank": "5",
+    "Element": "Fire",
+    "Path": "Abundance",
+    "Display Name": ""
   },
   {
     "Name": "Luka",
@@ -777,7 +929,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = EHR (until cap) > Break Effect >= ATK%",
     "ID": 1111,
-    "Release": 122
+    "Release": 122,
+    "Rank": "4",
+    "Element": "Physical",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Luocha",
@@ -797,7 +953,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > ATK% > DEF% = HP% > EFF RES%",
     "ID": 1203,
-    "Release": 112
+    "Release": 112,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Abundance",
+    "Display Name": ""
   },
   {
     "Name": "Lynx",
@@ -817,7 +977,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > HP% > Effect RES > DEF%",
     "ID": 1110,
-    "Release": 132
+    "Release": 132,
+    "Rank": "4",
+    "Element": "Quantum",
+    "Path": "Abundance",
+    "Display Name": ""
   },
   {
     "Name": "March 7th",
@@ -837,7 +1001,11 @@
     "Planetary5": "",
     "Substats": "Effect Hit Rate (Until 64% OR skip if no Freeze build) = SPD (Breakpoint) > DEF% > HP% = Effect RES",
     "ID": 1001,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Ice",
+    "Path": "Preservation",
+    "Display Name": ""
   },
   {
     "Name": "March 7th - The Hunt - Break Build",
@@ -857,7 +1025,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until breakpoint) > BREAK EFFECT%",
     "ID": 1224,
-    "Release": 241
+    "Release": 241,
+    "Rank": "4",
+    "Element": "Imaginary",
+    "Path": "The Hunt",
+    "Display Name": "March 7th - The Hunt (Break) "
   },
   {
     "Name": "March 7th - The Hunt - CRIT Build",
@@ -877,7 +1049,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until breakpoint) > CRIT RATE% = CRIT DMG% > ATK%",
     "ID": 1224,
-    "Release": 241
+    "Release": 241,
+    "Rank": "4",
+    "Element": "Imaginary",
+    "Path": "The Hunt",
+    "Display Name": "March 7th - The Hunt (CRIT) "
   },
   {
     "Name": "Misha",
@@ -897,7 +1073,11 @@
     "Planetary5": "",
     "Substats": "SPD (Breakpoint) > CRIT Rate = CRIT DMG > ATK%",
     "ID": 1312,
-    "Release": 201
+    "Release": 201,
+    "Rank": "4",
+    "Element": "Ice",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Moze",
@@ -917,7 +1097,11 @@
     "Planetary5": "",
     "Substats": "SPD (only if needed for your team) = CRIT RATE >= CRIT DMG > ATK%",
     "ID": 1223,
-    "Release": 251
+    "Release": 251,
+    "Rank": "4",
+    "Element": "Lightning",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Mydei",
@@ -937,7 +1121,11 @@
     "Planetary5": "",
     "Substats": "HP% (Best until 8k then equal) >= CRIT Rate / CRIT DMG",
     "ID": 1404,
-    "Release": 312
+    "Release": 312,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Natasha",
@@ -957,7 +1145,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > HP% > Effect RES = DEF%",
     "ID": 1105,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Physical",
+    "Path": "Abundance",
+    "Display Name": ""
   },
   {
     "Name": "Pela",
@@ -977,7 +1169,11 @@
     "Planetary5": "",
     "Substats": "Effect Hit Rate (Until 67%) = SPD (Until Breakpoint) > HP = DEF > Effect RES (30% with Broken Keel)",
     "ID": 1106,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Ice",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Phainon",
@@ -997,7 +1193,11 @@
     "Planetary5": "",
     "Substats": "SPD (if needed) > CRIT RATE > CRIT DMG > ATK%",
     "ID": 1408,
-    "Release": 341
+    "Release": 341,
+    "Rank": "5",
+    "Element": "Physical",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Qingque",
@@ -1017,7 +1217,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT Rate = CRIT DMG > ATK%",
     "ID": 1201,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Quantum",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Rappa",
@@ -1037,7 +1241,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Desired Breakpoint) > Break Effect > ATK%",
     "ID": 1317,
-    "Release": 261
+    "Release": 261,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Robin",
@@ -1057,7 +1265,11 @@
     "Planetary5": "",
     "Substats": "ATK% >= SPD > HP% = DEF%",
     "ID": 1309,
-    "Release": 221
+    "Release": 221,
+    "Rank": "5",
+    "Element": "Physical",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Ruan Mei",
@@ -1077,7 +1289,11 @@
     "Planetary5": "",
     "Substats": "Break Effect (Until 180%) > SPD (Until Breakpoint) > HP% = DEF% > Effect RES (30% if using Broken Keel)",
     "ID": 1303,
-    "Release": 161
+    "Release": 161,
+    "Rank": "5",
+    "Element": "Ice",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Saber",
@@ -1097,7 +1313,11 @@
     "Planetary5": "",
     "Substats": "Unknown",
     "ID": 1014,
-    "Release": 342
+    "Release": 342,
+    "Rank": "5",
+    "Element": "Wind",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Sampo",
@@ -1117,7 +1337,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) = EHR (Until recommended) > ATK% > Break Effect",
     "ID": 1108,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Wind",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Seele",
@@ -1137,7 +1361,11 @@
     "Planetary5": "",
     "Substats": "CRIT RATE = CRIT DMG > ATK%",
     "ID": 1102,
-    "Release": 101
+    "Release": 101,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Serval",
@@ -1157,7 +1385,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1103,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Lightning",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Silver Wolf",
@@ -1177,7 +1409,11 @@
     "Planetary5": "",
     "Substats": "EHR% (Until Cap) = SPD (Until breakpoint) > HP = DEF = Break Effect% > EFF RES% (30% If Keel)",
     "ID": 1006,
-    "Release": 111
+    "Release": 111,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Sparkle",
@@ -1197,7 +1433,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until breakpoint OR as much as possible) > CRIT DMG% > HP = DEF = EFF RES% (30% if using Broken Keel)",
     "ID": 1306,
-    "Release": 202
+    "Release": 202,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Sunday",
@@ -1217,7 +1457,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until desired speed build) > CRIT DMG > EFF RES% > DEF% = HP%",
     "ID": 1313,
-    "Release": 271
+    "Release": 271,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Sushang",
@@ -1237,7 +1481,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > BREAK EFFECT% (If Break Build) >= CRIT RATE = CRIT DMG > ATK%",
     "ID": 1206,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Physical",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "The Herta",
@@ -1257,7 +1505,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Desired Breakpoint) > CRIT RATE > CRIT DMG > ATK%",
     "ID": 1401,
-    "Release": 301
+    "Release": 301,
+    "Rank": "5",
+    "Element": "Ice",
+    "Path": "Erudition",
+    "Display Name": ""
   },
   {
     "Name": "Tingyun",
@@ -1277,7 +1529,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until Breakpoint) = ATK% (Until Recommended) > HP = DEF > EFF RES% (30% if using Broken Keel)",
     "ID": 1202,
-    "Release": 100
+    "Release": 100,
+    "Rank": "4",
+    "Element": "Lightning",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Topaz & Numby",
@@ -1297,7 +1553,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1112,
-    "Release": 142
+    "Release": 142,
+    "Rank": "5",
+    "Element": "Fire",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Trailblazer - Destruction",
@@ -1317,7 +1577,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > BREAK EFFECT% (If Break Build) >= CRIT RATE = CRIT DMG > ATK%",
     "ID": 8001,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Physical",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Trailblazer - Harmony",
@@ -1337,7 +1601,11 @@
     "Planetary5": "",
     "Substats": "SPD = Break Effect% > HP% = DEF%",
     "ID": 8005,
-    "Release": 221
+    "Release": 221,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Trailblazer - Preservation",
@@ -1357,7 +1625,11 @@
     "Planetary5": "",
     "Substats": "Effect RES until 30% (if running Broken Keel) > Speed > DEF% > HP% > Effect Hit Rate",
     "ID": 8003,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Fire",
+    "Path": "Preservation",
+    "Display Name": ""
   },
   {
     "Name": "Trailblazer - Remembrance",
@@ -1377,7 +1649,11 @@
     "Planetary5": "",
     "Substats": "SPD > CRIT DMG > Effect RES (until 30% with Broken Keel)",
     "ID": 8007,
-    "Release": 301
+    "Release": 301,
+    "Rank": "5",
+    "Element": "Ice",
+    "Path": "Remembrance",
+    "Display Name": ""
   },
   {
     "Name": "Tribbie",
@@ -1397,7 +1673,11 @@
     "Planetary5": "",
     "Substats": "SPD (Until desired breakpoint and only if playing Fast Tribbie) > CRIT RATE = CRIT DMG > HP%",
     "ID": 1403,
-    "Release": 311
+    "Release": 311,
+    "Rank": "5",
+    "Element": "Quantum",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Welt",
@@ -1417,7 +1697,11 @@
     "Planetary5": "Inert Salsotto",
     "Substats": "SPD (breakpoint) = EHR% (Until recommended) > CRIT RATE = CRIT DMG > ATK%",
     "ID": 1004,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Imaginary",
+    "Path": "Nihility",
+    "Display Name": ""
   },
   {
     "Name": "Xueyi",
@@ -1437,7 +1721,11 @@
     "Planetary5": "Firmament Frontline: Glamoth",
     "Substats": "SPD (breakpoint) > BREAK EFFECT% >= CRIT RATE = CRIT DMG > ATK%",
     "ID": 1214,
-    "Release": 161
+    "Release": 161,
+    "Rank": "4",
+    "Element": "Quantum",
+    "Path": "Destruction",
+    "Display Name": ""
   },
   {
     "Name": "Yanqing",
@@ -1457,7 +1745,11 @@
     "Planetary5": "",
     "Substats": "SPD (breakpoint) > CRIT RATE (Until soft cap) = CRIT DMG > ATK% > CRIT RATE (After soft cap)",
     "ID": 1209,
-    "Release": 100
+    "Release": 100,
+    "Rank": "5",
+    "Element": "Ice",
+    "Path": "The Hunt",
+    "Display Name": ""
   },
   {
     "Name": "Yukong",
@@ -1477,7 +1769,11 @@
     "Planetary5": "",
     "Substats": "SPD > HP = DEF > EFF RES% (30% if using Broken Keel)",
     "ID": 1207,
-    "Release": 112
+    "Release": 112,
+    "Rank": "4",
+    "Element": "Imaginary",
+    "Path": "Harmony",
+    "Display Name": ""
   },
   {
     "Name": "Yunli",
@@ -1497,6 +1793,10 @@
     "Planetary5": "",
     "Substats": "CRIT RATE = CRIT DMG > ATK%",
     "ID": 1221,
-    "Release": 241
+    "Release": 241,
+    "Rank": "5",
+    "Element": "Physical",
+    "Path": "Destruction",
+    "Display Name": ""
   }
 ]
