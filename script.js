@@ -643,7 +643,7 @@
 
       const statBtn = target.closest('button.stat-option:not(:disabled)');
       const resetBtn = target.closest('#reset-filters-btn');
-      const collapseToggleBtn = target.closest('.collapse-toggle-btn');
+      const collapseTrigger = target.closest('.filter-section-header');
       const stepperBtn = target.closest('.stepper-btn:not(:disabled)');
       const charFilterToggleBtn = target.closest('#character-filter-toggle');
       const charFilterBtn = target.closest('#relic-page-character-filter-bar .filter-option');
@@ -670,7 +670,8 @@
           filterArea.querySelectorAll('button.stat-option.active').forEach(btn => btn.classList.remove('active'));
           updateStepperState();
           needsRender = true;
-      } else if (collapseToggleBtn) {
+      } else if (collapseTrigger) {
+          const collapseToggleBtn = collapseTrigger.querySelector('.collapse-toggle-btn');
           const content = document.getElementById(collapseToggleBtn.getAttribute('aria-controls'));
           const isExpanded = collapseToggleBtn.getAttribute('aria-expanded') === 'true';
           collapseToggleBtn.setAttribute('aria-expanded', !isExpanded);
