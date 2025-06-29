@@ -48,8 +48,8 @@
   };
   
   const CHARACTER_FILTER_CONFIG = {
-    rank: { label: "Rank", options: ["5", "4"] },
-    element: { label: "Element", options: ["Physical", "Fire", "Ice", "Lightning", "Wind", "Quantum", "Imaginary"] },
+    rank: { label: "Rank", options: [5, 4] },
+    type: { label: "Type", options: ["Physical", "Fire", "Ice", "Lightning", "Wind", "Quantum", "Imaginary"] },
     path: { label: "Path", options: ["Destruction", "The Hunt", "Erudition", "Harmony", "Nihility", "Preservation", "Abundance", "Remembrance"] }
   };
 
@@ -57,7 +57,7 @@
   let searchableListItems = [];
   let currentSearchFocusIndex = -1;
   let previousPageInfo = { type: null, slug: null, filters: null };
-  let characterListFilters = { rank: new Set(), element: new Set(), path: new Set() };
+  let characterListFilters = { rank: new Set(), type: new Set(), path: new Set() };
 
 
   // --- Utility Functions ---
@@ -215,7 +215,7 @@
         name: item.Name,
         displayName: item["Display Name"] || item.Name,
         rank: item.Rank,
-        element: item.Element,
+        type: item.Type,
         path: item.Path,
         ID: item.ID,
         Release: item.Release,
@@ -261,7 +261,7 @@
         slug = slugify(item.name);
         href = `#/characters/${slug}`;
         imgSrc = `images/character/${slug}.webp`;
-        extraClasses = `character-rank-${item.rank} character-element-${slugify(item.element)} character-path-${slugify(item.path)}`;
+        extraClasses = `character-rank-${item.rank} character-type-${slugify(item.type)} character-path-${slugify(item.path)}`;
       }
       return `<li class="${extraClasses}"><a href="${href}" title="${name}"><img src="${imgSrc}" alt="" class="item-icon ${itemClass}"><span>${name}</span></a></li>`;
     }).join("");
