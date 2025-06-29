@@ -50,7 +50,7 @@
   const CHARACTER_FILTER_CONFIG = {
     rank: { label: "Rank", options: ["5", "4"] },
     element: { label: "Element", options: ["Physical", "Fire", "Ice", "Lightning", "Wind", "Quantum", "Imaginary"] },
-    path: { label: "Path", options: ["Abundance", "Destruction", "Erudition", "Harmony", "The Hunt", "Nihility", "Preservation", "Remembrance"] }
+    path: { label: "Path", options: ["Destruction", "The Hunt", "Erudition", "Harmony", "Nihility", "Preservation", "Abundance", "Remembrance"] }
   };
 
   // --- Application State ---
@@ -325,7 +325,7 @@
             const isActive = characterListFilters[type].has(value);
             const iconSlug = type === 'rank' ? `rank-${value}` : slugify(value);
             const title = type === 'rank' ? `${value} Stars` : value;
-            filterHtml += `<button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${title}"><img src="/images/game-icon/${iconSlug}.webp" alt="${value}"></button>`;
+            filterHtml += `<button class="filter-option ${isActive ? 'active' : ''}" data-filter-value="${value}" title="${title}"><img src="/images/game-icon/${iconSlug}.webp" alt="${title}"></button>`;
         });
         filterHtml += `</div>`;
     }
