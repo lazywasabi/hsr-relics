@@ -48,7 +48,7 @@
   };
   
   const CHARACTER_FILTER_CONFIG = {
-    rank: { label: "Rank", options: [5, 4] },
+    rank: { label: "Rank", options: ["5", "4"] },
     type: { label: "Type", options: ["Physical", "Fire", "Ice", "Lightning", "Wind", "Quantum", "Imaginary"] },
     path: { label: "Path", options: ["Destruction", "The Hunt", "Erudition", "Harmony", "Nihility", "Preservation", "Abundance", "Remembrance"] }
   };
