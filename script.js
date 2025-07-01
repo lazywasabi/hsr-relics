@@ -739,7 +739,7 @@
       currentSearchFocusIndex = newIndex;
       const item = searchableListItems[currentSearchFocusIndex];
       item.classList.add("focused-search-item");
-      item.scrollIntoView({ block: "nearest" });
+      item.scrollIntoView({ block: "center" });
   }
 
   function handleUniversalSearch() {
@@ -907,7 +907,8 @@
         } else if (e.key === "ArrowUp") {
           e.preventDefault();
           const prevIndex = (currentSearchFocusIndex - 1 + searchableListItems.length) % searchableListItems.length;
-          updateSearchItemFocus(prevIndex);
+          const lastIndex = searchableListItems.length - 1;
+          updateSearchItemFocus(currentSearchFocusIndex === -1 ? lastIndex : prevIndex);
         } else if (e.key === "Enter") {
           e.preventDefault();
           const targetIndex = currentSearchFocusIndex === -1 ? 0 : currentSearchFocusIndex;
