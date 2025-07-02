@@ -44,7 +44,7 @@
   const SUBSTAT_ALIASES = { // Keys are lowercase for consistent matching
     hp: "HP%", def: "DEF%", atk: "ATK%", spd: "Speed", ehr: "Effect Hit Rate", "ehr%": "Effect Hit Rate",
     "eff res": "Effect RES", "eff res%": "Effect RES", "crit rate": "CRIT Rate", "crit dmg": "CRIT DMG",
-    "break effect%": "Break Effect",
+    "break effect%": "Break Effect", "break%": "Break Effect",
   };
   
   const CHARACTER_FILTER_CONFIG = {
