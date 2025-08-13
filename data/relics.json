@@ -372,7 +372,7 @@
     "Name": "Arcadia of Woven Dreams",
     "Type": "Planetary Ornament Set",
     "Group": "",
-    "2-Piece Bonus": "When there are currently more or less than 4 ally targets in battle, each additional/missing ally target increases the wearer and their memosprite's DMG by 9%/12%, up to a maximum of 4/3 stacks.",
+    "2-Piece Bonus": "When the number of ally targets on the field is not equal to 4, for every 1 additional/missing ally target, increases the DMG dealt by the wearer and their memosprite by 9%/12%, stacking up to 4/3 time(s).",
     "4-Piece Bonus": ""
   },
   {
@@ -380,7 +380,7 @@
     "Name": "Revelry by the Sea",
     "Type": "Planetary Ornament Set",
     "Group": "",
-    "2-Piece Bonus": "Increases the wearer's ATK by 12%. When the wearer's ATK is higher than or equal to 2400/3600, increases the DoT DMG dealt by 12%/24%.",
+    "2-Piece Bonus": "Increases the wearer's ATK by 12%. When the wearer's ATK is higher than or equal to 2400/3600, increases the DoT DMG dealt by 12%/24% respectively.",
     "4-Piece Bonus": ""
   }
 ]
