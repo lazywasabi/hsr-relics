@@ -171,7 +171,7 @@
     "ID": 122,
     "Name": "Scholar Lost in Erudition",
     "Type": "Relic Set",
-    "Group": "",
+    "Group": "CRITRate8%",
     "2-Piece Bonus": "Increases CRIT Rate by 8%.",
     "4-Piece Bonus": "Increases DMG dealt by Skill and Ultimate by 20%. After using Ultimate, additionally increases the DMG dealt by the next Skill by 25%."
   },
@@ -206,6 +206,22 @@
     "Group": "",
     "2-Piece Bonus": "Increases CRIT DMG by 16%.",
     "4-Piece Bonus": "When the wearer becomes the target of another ally target's ability, gains 1 stack of \"Help,\" stacking up to 2 time(s). If there are 2 stack(s) of \"Help\" when the wearer uses their Ultimate, consumes all \"Help\" to increase the wearer's ATK by 48% for 1 turn(s)."
+  },
+  {
+    "ID": 127,
+    "Name": "World-Remaking Deliverer",
+    "Type": "Relic Set",
+    "Group": "CRITRate8%",
+    "2-Piece Bonus": "Increases CRIT Rate by 8%.",
+    "4-Piece Bonus": "After the wearer uses Basic ATK or Skill, if the wearer's memosprite is on the field, increases Max HP of the wearer and their memosprite by 24%, and increases all allies' DMG by 15% until the wearer's next Basic ATK or Skill."
+  },
+  {
+    "ID": 128,
+    "Name": "Self-Enshrouded Recluse",
+    "Type": "Relic Set",
+    "Group": "",
+    "2-Piece Bonus": "Increases Shield Effect by 10%.",
+    "4-Piece Bonus": "Increases Shield Effect provided by the wearer by 12%. When an ally target has a Shield provided by the wearer, the ally target's CRIT DMG increases by 15%."
   },
   {
     "ID": 301,
